@@ -1,0 +1,10 @@
+[package]
+name = "rayon"
+version = "0.1.0"
+authors = ["Simon Coffey <simon@urbanautomaton.com>"]
+edition = "2018"
+description = "A terrible rust version of pbrt"
+
+[dependencies]
+image = "0.21.0"
+num-complex = "0.2.1"
