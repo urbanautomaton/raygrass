@@ -2,7 +2,7 @@ use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Sphere {
     center: Vec,
     radius: f64,
@@ -25,13 +25,13 @@ impl Sphere {
         let a = dot.powi(2);
         let b = oc.length().powi(2) - self.radius.powi(2);
 
-        // println!("{}, {}, {}", a, b, a - b);
+        println!("{}, {}, {}", a, b, a - b);
 
         if a < b { return None; }
 
         let sqrt = (a - b).sqrt();
         let ts = vec![-dot - sqrt, -dot + sqrt];
-        // println!("ts: {:?}", ts);
+        println!("ts: {:?}", ts);
 
         let positive_ts: std::vec::Vec<f64> = ts
             .into_iter()
@@ -50,3 +50,5 @@ impl Sphere {
     }
 }
 
+#[cfg(test)]
+mod test;
