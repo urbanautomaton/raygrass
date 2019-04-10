@@ -25,13 +25,10 @@ impl Sphere {
         let a = dot.powi(2);
         let b = oc.length().powi(2) - self.radius.powi(2);
 
-        println!("{}, {}, {}", a, b, a - b);
-
         if a < b { return None; }
 
         let sqrt = (a - b).sqrt();
         let ts = vec![-dot - sqrt, -dot + sqrt];
-        println!("ts: {:?}", ts);
 
         let positive_ts: std::vec::Vec<f64> = ts
             .into_iter()

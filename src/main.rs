@@ -45,7 +45,6 @@ fn main() {
 
         for object in &objects {
             if let Some(t) = object.intersect(ray) {
-                println!("Hit a thing! {:?}", min_object);
                 if t < min_t {
                    min_t = t;
                    min_object = Some(object);
