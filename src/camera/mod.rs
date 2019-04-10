@@ -9,7 +9,10 @@ pub struct Camera {
 
 impl Camera {
     pub fn trace(&self, x: f64, y: f64) -> Ray {
-        let direction = self.film.project(x, y).subtract(self.eye).normalize();
+        let direction = self.film
+            .project(x, y)
+            .subtract(self.eye)
+            .normalize();
 
         Ray {
             origin: self.eye,

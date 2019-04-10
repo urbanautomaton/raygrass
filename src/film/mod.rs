@@ -20,7 +20,7 @@ impl Film {
     pub fn project(&self, x: f64, y: f64) -> Vec {
         Vec::new(
             self.top_left.x + (x * self.width),
-            self.top_left.y + (y * self.height),
+            self.top_left.y - (y * self.height),
             self.z
         )
     }
