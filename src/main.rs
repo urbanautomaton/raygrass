@@ -23,10 +23,10 @@ fn main() {
     let film = Film::new(Vec::new(-0.8, 1.2, 1.3), Vec::new(1.2, -0.3, 1.3));
     let camera = Camera { eye, film };
     let objects = vec![
-        Sphere::new(Vec::new(0.0, 1.0, 5.0), 1.0, Color::new(255, 0, 150)),
-        Sphere::new(Vec::new(1.0, 1.0, 5.0), 1.0, Color::new(0, 255, 0)),
-        Sphere::new(Vec::new(2.0, 1.0, 5.0), 1.0, Color::new(0, 0, 255)),
-        Sphere::new(Vec::new(-1.0, 1.5, 4.0), 0.2, Color::new(255, 255, 0)),
+        Sphere::new(Vec::new(0.0, 1.0, 5.0), 1.0, Color::new(255.0, 0.0, 150.0)),
+        Sphere::new(Vec::new(1.0, 1.0, 5.0), 1.0, Color::new(0.0, 255.0, 0.0)),
+        Sphere::new(Vec::new(2.0, 1.0, 5.0), 1.0, Color::new(0.0, 0.0, 255.0)),
+        Sphere::new(Vec::new(-1.0, 1.5, 4.0), 0.2, Color::new(255.0, 255.0, 0.0)),
     ];
 
     let lights = vec![
@@ -64,7 +64,7 @@ fn main() {
 
             let shade = hit.color.scale(energy);
 
-            *pixel = image::Rgb([shade.r, shade.g, shade.b]);
+            *pixel = image::Rgb([shade.r as u8, shade.g as u8, shade.b as u8]);
         } else {
             *pixel = image::Rgb([30, 30, 30]);
         }
