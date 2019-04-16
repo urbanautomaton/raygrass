@@ -71,5 +71,5 @@ fn main() {
 
     }
 
-    buf.save("out.png").expect("Saving image failed");
+    buf.save("out/render.png").expect("Saving image failed");
 }
