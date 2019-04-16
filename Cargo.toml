@@ -1,5 +1,5 @@
 [package]
-name = "rayon"
+name = "raygrass"
 version = "0.1.0"
 authors = ["Simon Coffey <simon@urbanautomaton.com>"]
 edition = "2018"
