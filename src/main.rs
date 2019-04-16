@@ -72,12 +72,4 @@ fn main() {
     }
 
     buf.save("out.png").expect("Saving image failed");
-
-    // let img = image::open("data/in.png").expect("Opening image failed");
-
-    // println!("dimensions {:?}", img.dimensions());
-    // println!("{:?}", img.color());
-
-    // let filtered = img.fliph();
-    // filtered.save("out.png").expect("Saving image failed");
 }
