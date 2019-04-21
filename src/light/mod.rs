@@ -12,7 +12,7 @@ impl Light {
         Light { center, power }
     }
 
-    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &std::vec::Vec<Sphere>) -> f64 {
+    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Sphere]) -> f64 {
         let point_to_light = self.center.subtract(point);
         let length = point_to_light.length();
 

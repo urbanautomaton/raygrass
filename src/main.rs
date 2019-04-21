@@ -14,6 +14,37 @@ use object::sphere::Sphere;
 use light::Light;
 use film::Film;
 use camera::Camera;
+use ray::Ray;
+
+
+fn trace(objects: &[Sphere], lights: &[Light], ray: Ray) -> Color {
+    let mut min_t = std::f64::INFINITY;
+    let mut min_object: Option<&Sphere> = None;
+
+    for object in objects {
+        if let Some(t) = object.intersect(ray) {
+            if t < min_t {
+                min_t = t;
+                min_object = Some(object);
+            }
+        }
+    }
+
+    if let Some(hit) = min_object {
+        let intersection = ray.at(min_t);
+        let normal = hit.surface_normal(intersection);
+
+        let energy = lights
+            .iter()
+            .fold(0.0, |acc, light|
+                  acc + light.illuminate(intersection, normal, &objects)
+            );
+
+        hit.color.scale(energy)
+    } else {
+        Color::new(30.0, 30.0, 30.0)
+    }
+}
 
 fn main() {
     let img_x = 1600;
@@ -22,6 +53,7 @@ fn main() {
     let eye = Vec::new(0.0, 0.0, 0.3);
     let film = Film::new(Vec::new(-0.8, 1.2, 1.3), Vec::new(1.2, -0.3, 1.3));
     let camera = Camera { eye, film };
+
     let objects = vec![
         Sphere::new(Vec::new(0.0,  1.0, 5.0), 1.0, Color::new(255.0, 0.0,   150.0), 0.2),
         Sphere::new(Vec::new(1.0,  1.0, 5.0), 1.0, Color::new(0.0,   255.0, 0.0),   0.8),
@@ -40,35 +72,9 @@ fn main() {
     for (x, y, pixel) in buf.enumerate_pixels_mut() {
         let ray = camera.trace(x as f64 / img_x as f64, y as f64 / img_y as f64);
 
-        let mut min_t = std::f64::INFINITY;
-        let mut min_object: Option<&Sphere> = None;
+        let color = trace(&objects, &lights, ray);
 
-        for object in &objects {
-            if let Some(t) = object.intersect(ray) {
-                if t < min_t {
-                   min_t = t;
-                   min_object = Some(object);
-                }
-            }
-        }
-
-        if let Some(hit) = min_object {
-            let intersection = ray.at(min_t);
-            let normal = hit.surface_normal(intersection);
-
-            let energy = lights
-                .iter()
-                .fold(0.0, |acc, light|
-                      acc + light.illuminate(intersection, normal, &objects)
-                );
-
-            let shade = hit.color.scale(energy);
-
-            *pixel = image::Rgb([shade.r as u8, shade.g as u8, shade.b as u8]);
-        } else {
-            *pixel = image::Rgb([30, 30, 30]);
-        }
-
+        *pixel = image::Rgb([color.r as u8, color.g as u8, color.b as u8]);
     }
 
     buf.save("out/render.png").expect("Saving image failed");
