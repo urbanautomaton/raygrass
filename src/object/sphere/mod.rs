@@ -7,15 +7,12 @@ pub struct Sphere {
     center: Vec,
     radius: f64,
     pub color: Color,
+    pub reflectance: f64,
 }
 
 impl Sphere {
-    pub fn new(center: Vec, radius: f64, color: Color) -> Sphere {
-        Sphere {
-            center: center,
-            radius: radius,
-            color: color,
-        }
+    pub fn new(center: Vec, radius: f64, color: Color, reflectance: f64) -> Self {
+        Self { center, radius, color, reflectance }
     }
 
     pub fn intersect(&self, ray: Ray) -> Option<f64> {
