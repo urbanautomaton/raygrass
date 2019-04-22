@@ -17,4 +17,12 @@ impl Color {
             (self.b * scalar).min(255.0),
         )
     }
+
+    pub fn add(&self, other: Self) -> Self {
+        Self::new(
+            (self.r + other.r).min(255.0),
+            (self.g + other.g).min(255.0),
+            (self.b + other.b).min(255.0),
+        )
+    }
 }
