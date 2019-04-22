@@ -95,12 +95,10 @@ fn main() {
     for (x, y, pixel) in buf.enumerate_pixels_mut() {
         let ray = camera.trace(x as f64 / img_x as f64, y as f64 / img_y as f64);
 
-        if let Some(color) = trace(&objects, &lights, ray, 50) {
-            *pixel = image::Rgb([color.r as u8, color.g as u8, color.b as u8]);
-        } else {
-            *pixel = image::Rgb([30, 30, 30]);
-        }
+        let color = trace(&objects, &lights, ray, 50)
+            .unwrap_or(Color::new(30.0, 30.0, 30.0));
 
+        *pixel = image::Rgb([color.r as u8, color.g as u8, color.b as u8]);
     }
 
     buf.save("out/render.png").expect("Saving image failed");
