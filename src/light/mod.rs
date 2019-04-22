@@ -1,5 +1,5 @@
 use crate::vector::Vec;
-use crate::object::sphere::Sphere;
+use crate::object::Object;
 use crate::ray::Ray;
 
 pub struct Light {
@@ -12,7 +12,7 @@ impl Light {
         Light { center, power }
     }
 
-    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Sphere]) -> f64 {
+    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Box<Object>]) -> f64 {
         let point_to_light = self.center.subtract(point);
         let length = point_to_light.length();
 

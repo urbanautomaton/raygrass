@@ -1,8 +1,9 @@
+use crate::object::Object;
 use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Sphere {
     center: Vec,
     radius: f64,
@@ -14,8 +15,10 @@ impl Sphere {
     pub fn new(center: Vec, radius: f64, color: Color, reflectance: f64) -> Self {
         Self { center, radius, color, reflectance }
     }
+}
 
-    pub fn intersect(&self, ray: Ray) -> Option<f64> {
+impl Object for Sphere {
+    fn intersect(&self, ray: Ray) -> Option<f64> {
         let oc = ray.origin.subtract(self.center);
         let dot = ray.direction.normalize().dot(oc);
 
@@ -39,8 +42,16 @@ impl Sphere {
         }
     }
 
-    pub fn surface_normal(&self, point: Vec) -> Vec {
+    fn surface_normal(&self, point: Vec) -> Vec {
         point.subtract(self.center).normalize()
+    }
+
+    fn color_at(&self, _point: Vec) -> Color {
+        self.color
+    }
+
+    fn reflectance(&self) -> f64 {
+        self.reflectance
     }
 }
 
