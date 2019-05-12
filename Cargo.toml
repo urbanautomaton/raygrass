@@ -8,3 +8,4 @@ description = "A terrible rust version of pbrt"
 [dependencies]
 image = "0.21.0"
 num-complex = "0.2.1"
+rand = "0.6.5"

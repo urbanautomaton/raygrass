@@ -18,7 +18,7 @@ use camera::Camera;
 fn main() {
     let eye = Vec::new(0.0, 0.0, 0.3);
     let film = Film::new(Vec::new(-0.8, 1.2, 1.3), Vec::new(1.2, -0.3, 1.3));
-    let camera = Camera { eye, film, img_x: 1600, img_y: 1200 };
+    let camera = Camera { eye, film, img_x: 1600, img_y: 1200, samples: 50 };
 
     let objects: std::vec::Vec<Box<Object>> = vec![
         Box::new(Sphere::new(Vec::new(-1.0, 1.0, 5.0), 0.8, Color::new(255.0, 50.0,  50.0),  0.05)),

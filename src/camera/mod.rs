@@ -1,5 +1,7 @@
 extern crate image;
 
+use rand::prelude::*;
+
 use crate::vector::Vec;
 use crate::color::Color;
 use crate::object::Object;
@@ -12,6 +14,7 @@ pub struct Camera {
     pub film: Film,
     pub img_x: u32,
     pub img_y: u32,
+    pub samples: u32,
 }
 
 impl Camera {
@@ -20,20 +23,34 @@ impl Camera {
         let mut buf = image::ImageBuffer::new(self.img_x, self.img_y);
 
         for (x, y, pixel) in buf.enumerate_pixels_mut() {
-            let ray = self.ray_for_pixel(x as f64 / self.img_x as f64, y as f64 / self.img_y as f64);
+            let mut r: f64 = 0.0;
+            let mut g: f64 = 0.0;
+            let mut b: f64 = 0.0;
 
-            let color = self.trace(objects, lights, ray, 50)
-                .unwrap_or(Color::new(30.0, 30.0, 30.0));
+            for _ in 0..self.samples {
+                let ray = self.ray_for_pixel(x, y);
 
-            *pixel = image::Rgb([color.r as u8, color.g as u8, color.b as u8]);
+                let color = self.trace(objects, lights, ray, 50)
+                    .unwrap_or(Color::new(30.0, 30.0, 30.0));
+
+                r += color.r;
+                g += color.g;
+                b += color.b;
+            }
+
+
+            *pixel = image::Rgb([(r / self.samples as f64) as u8, (g / self.samples as f64) as u8, (b / self.samples as f64) as u8]);
         }
 
         buf.save(outfile).expect("Saving image failed");
     }
 
-    fn ray_for_pixel(&self, x: f64, y: f64) -> Ray {
+    fn ray_for_pixel(&self, x: u32, y: u32) -> Ray {
         let direction = self.film
-            .project(x, y)
+            .project(
+                x as f64 / self.img_x as f64 + random::<f64>() / self.img_x as f64,
+                y as f64 / self.img_y as f64 + random::<f64>() / self.img_y as f64,
+                )
             .subtract(self.eye)
             .normalize();
 
