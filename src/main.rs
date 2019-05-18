@@ -5,10 +5,11 @@ mod ray;
 mod light;
 mod film;
 mod camera;
+mod hittable;
 
 use vector::Vec;
 use color::Color;
-use object::Object;
+use hittable::*;
 use object::sphere::Sphere;
 use object::plane::Plane;
 use light::Light;
@@ -20,7 +21,7 @@ fn main() {
     let film = Film::new(Vec::new(-0.8, 1.2, 1.3), Vec::new(1.2, -0.3, 1.3));
     let camera = Camera { eye, film, img_x: 1600, img_y: 1200, samples: 50 };
 
-    let objects: std::vec::Vec<Box<Object>> = vec![
+    let objects: std::vec::Vec<Box<Hittable>> = vec![
         Box::new(Sphere::new(Vec::new(-1.0, 1.0, 5.0), 0.8, Color::new(255.0, 50.0,  50.0),  0.05)),
         Box::new(Sphere::new(Vec::new(1.0,  1.0, 5.0), 0.8, Color::new(50.0,  255.0, 100.0), 0.8)),
         Box::new(Sphere::new(Vec::new(2.5,  1.0, 5.0), 0.8, Color::new(50.0,  100.0, 255.0), 0.0)),

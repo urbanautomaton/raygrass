@@ -1,6 +1,6 @@
 use crate::vector::Vec;
-use crate::object::Object;
 use crate::ray::Ray;
+use crate::hittable::Hittable;
 
 pub struct Light {
     center: Vec,
@@ -12,7 +12,7 @@ impl Light {
         Light { center, power }
     }
 
-    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Box<Object>]) -> f64 {
+    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Box<Hittable>]) -> f64 {
         let point_to_light = self.center.subtract(point);
         let length = point_to_light.length();
 
@@ -22,8 +22,8 @@ impl Light {
         };
 
         let occluded = objects.into_iter().any(|s|
-            match s.intersect(shadow_ray) {
-                Some(t) => t > 1e-10 && t < length,
+            match s.hit(&shadow_ray, 0.0, std::f64::INFINITY) {
+                Some(hit) => hit.t > 1e-10 && hit.t < length,
                 _ => false
             }
         );

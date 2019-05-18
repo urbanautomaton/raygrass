@@ -1,4 +1,4 @@
-use crate::object::Object;
+use crate::hittable::*;
 use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
@@ -15,23 +15,6 @@ impl Plane {
     pub fn new(point: Vec, normal: Vec, color: Color, reflectance: f64) -> Self {
         Self { point, normal, color, reflectance }
     }
-}
-
-impl Object for Plane {
-    fn intersect(&self, ray: Ray) -> Option<f64> {
-        let ndotl = self.normal.dot(ray.direction);
-
-        if ndotl.abs() < 1e-10 { 
-            None
-        } else {
-            let t = self.normal.dot(self.point.subtract(ray.origin)) / ndotl;
-            if t < 0.0 { None } else { Some(t) }
-        }
-    }
-
-    fn surface_normal(&self, _point: Vec) -> Vec {
-        self.normal
-    }
 
     fn color_at(&self, point: Vec) -> Color {
         if (point.x.round() + point.z.round()).abs() % 2.0 < 1e-10 {
@@ -40,8 +23,20 @@ impl Object for Plane {
             self.color
         }
     }
+}
 
-    fn reflectance(&self) -> f64 {
-        self.reflectance
+impl Hittable for Plane {
+    fn hit(&self, ray: &Ray, t_min: f64, _t_max: f64) -> Option<Hit> {
+        let ndotl = self.normal.dot(ray.direction);
+
+        if ndotl.abs() < 1e-10 { 
+            None
+        } else {
+            let t = self.normal.dot(self.point.subtract(ray.origin)) / ndotl;
+            let p = ray.at(t);
+            let color = self.color_at(p);
+
+            if t < t_min { None } else { Some(Hit { t, p, normal: self.normal, color, reflectance: self.reflectance }) }
+        }
     }
 }
