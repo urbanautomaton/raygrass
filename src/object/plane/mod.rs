@@ -26,7 +26,7 @@ impl Plane {
 }
 
 impl Hittable for Plane {
-    fn hit(&self, ray: &Ray, t_min: f64, _t_max: f64) -> Option<Hit> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let ndotl = self.normal.dot(ray.direction);
 
         if ndotl.abs() < 1e-10 { 
@@ -36,7 +36,17 @@ impl Hittable for Plane {
             let p = ray.at(t);
             let color = self.color_at(p);
 
-            if t < t_min { None } else { Some(Hit { t, p, normal: self.normal, color, reflectance: self.reflectance }) }
+            if t < t_min || t > t_max {
+                None
+            } else {
+                Some(Hit {
+                    t,
+                    p,
+                    normal: self.normal,
+                    color,
+                    reflectance: self.reflectance
+                })
+            }
         }
     }
 }

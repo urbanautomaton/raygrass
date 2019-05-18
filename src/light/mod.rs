@@ -21,12 +21,7 @@ impl Light {
             direction: point_to_light.normalize()
         };
 
-        let occluded = objects.into_iter().any(|s|
-            match s.hit(&shadow_ray, 0.0, std::f64::INFINITY) {
-                Some(hit) => hit.t > 1e-10 && hit.t < length,
-                _ => false
-            }
-        );
+        let occluded = objects.into_iter().any(|s| s.hit(&shadow_ray, 1e-10, length).is_some());
 
         if occluded { return 0.0; }
 

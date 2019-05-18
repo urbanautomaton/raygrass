@@ -26,7 +26,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f64, _t_max: f64) -> Option<Hit> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin.subtract(self.center);
         let dot = ray.direction.normalize().dot(oc);
 
@@ -40,7 +40,7 @@ impl Hittable for Sphere {
 
         let valid_ts: std::vec::Vec<f64> = ts
             .into_iter()
-            .filter(|t| *t >= t_min)
+            .filter(|t| *t >= t_min && *t <= t_max)
             .collect();
 
         if valid_ts.len() > 0 {
