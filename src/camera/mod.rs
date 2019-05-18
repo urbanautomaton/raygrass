@@ -1,5 +1,6 @@
 extern crate image;
 
+use std::cmp::Ordering;
 use rand::prelude::*;
 
 use crate::vector::Vec;
@@ -65,22 +66,9 @@ impl Camera {
             return None;
         }
 
-        let mut min_hit: Option<Hit> = None;
-
-        for object in objects {
-            if let Some(hit) = object.hit(&ray, 0.0, std::f64::INFINITY) {
-                match min_hit {
-                    None => { min_hit = Some(hit) },
-                    Some(old_min_hit) => {
-                        if hit.t < old_min_hit.t {
-                            min_hit = Some(hit);
-                        } else {
-                            min_hit = Some(old_min_hit);
-                        }
-                    }
-                }
-            }
-        }
+        let min_hit = objects.iter()
+            .filter_map(|o| o.hit(&ray, 0.0, std::f64::INFINITY))
+            .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal));
 
         if let Some(hit) = min_hit {
             let intersection = hit.p;
