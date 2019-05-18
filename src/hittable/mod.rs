@@ -2,6 +2,7 @@ use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
 
+#[derive(Debug, PartialEq)]
 pub struct Hit {
     pub t: f64,
     pub p: Vec,
