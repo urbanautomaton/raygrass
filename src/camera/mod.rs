@@ -55,10 +55,13 @@ impl Camera {
             .subtract(self.eye)
             .normalize();
 
-        Ray {
-            origin: self.eye,
-            direction,
-        }
+        Ray { origin: self.eye, direction }
+    }
+
+    fn ray_hit(&self, objects: &[Box<Hittable>], ray: Ray) -> Option<Hit> {
+        objects.iter()
+            .filter_map(|o| o.hit(&ray, 0.0, std::f64::INFINITY))
+            .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal))
     }
 
     fn trace(&self, objects: &[Box<Hittable>], lights: &[Light], ray: Ray, remaining_calls: u32) -> Option<Color> {
@@ -66,11 +69,7 @@ impl Camera {
             return None;
         }
 
-        let min_hit = objects.iter()
-            .filter_map(|o| o.hit(&ray, 0.0, std::f64::INFINITY))
-            .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal));
-
-        if let Some(hit) = min_hit {
+        if let Some(hit) = self.ray_hit(objects, ray) {
             let intersection = hit.p;
             let normal = hit.normal;
 
