@@ -47,13 +47,10 @@ impl Camera {
     }
 
     fn ray_for_pixel(&self, x: u32, y: u32) -> Ray {
-        let direction = self.film
-            .project(
-                x as f64 / self.img_x as f64 + random::<f64>() / self.img_x as f64,
-                y as f64 / self.img_y as f64 + random::<f64>() / self.img_y as f64,
-                )
-            .subtract(self.eye)
-            .normalize();
+        let x_frac = x as f64 / self.img_x as f64 + random::<f64>() / self.img_x as f64;
+        let y_frac = y as f64 / self.img_y as f64 + random::<f64>() / self.img_y as f64;
+
+        let direction = (self.film.project(x_frac, y_frac) - self.eye).normalize();
 
         Ray { origin: self.eye, direction }
     }
@@ -83,8 +80,8 @@ impl Camera {
             let illuminated_color = surface_color.scale(energy).scale(1.0 - hit.reflectance);
 
             let dot = ray.direction.dot(normal);
-            let reflection_direction = ray.direction.subtract(normal.scale(2.0 * dot));
-            let reflection_point = intersection.add(normal.scale(1e-10));
+            let reflection_direction = ray.direction - normal * (2.0 * dot);
+            let reflection_point = intersection + normal * 1e-10;
             let reflection_ray = Ray { origin: reflection_point, direction: reflection_direction };
 
             if let Some(incoming_color) = self.trace(objects, lights, reflection_ray, remaining_calls - 1) {

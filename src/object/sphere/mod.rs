@@ -17,7 +17,7 @@ impl Sphere {
     }
 
     fn surface_normal(&self, point: Vec) -> Vec {
-        point.subtract(self.center).normalize()
+        (point - self.center).normalize()
     }
 
     fn color_at(&self, _point: Vec) -> Color {
@@ -27,7 +27,7 @@ impl Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
-        let oc = ray.origin.subtract(self.center);
+        let oc = ray.origin - self.center;
         let dot = ray.direction.normalize().dot(oc);
 
         let a = dot.powi(2);

@@ -32,7 +32,7 @@ impl Hittable for Plane {
         if ndotl.abs() < 1e-10 { 
             None
         } else {
-            let t = self.normal.dot(self.point.subtract(ray.origin)) / ndotl;
+            let t = self.normal.dot(self.point - ray.origin) / ndotl;
             let p = ray.at(t);
             let color = self.color_at(p);
 

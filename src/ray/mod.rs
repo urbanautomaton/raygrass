@@ -8,6 +8,6 @@ pub struct Ray {
 
 impl Ray {
     pub fn at(&self, t: f64) -> Vec {
-        self.origin.add(self.direction.scale(t))
+        self.origin + self.direction * t
     }
 }
