@@ -2,18 +2,19 @@ use crate::hittable::*;
 use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
+use crate::material::Material;
 
-#[derive(Debug, PartialEq)]
-pub struct Sphere {
+pub struct Sphere<'a> {
     center: Vec,
     radius: f64,
     pub color: Color,
     pub reflectance: f64,
+    pub material: &'a Material,
 }
 
-impl Sphere {
-    pub fn new(center: Vec, radius: f64, color: Color, reflectance: f64) -> Self {
-        Self { center, radius, color, reflectance }
+impl<'a> Sphere<'a> {
+    pub fn new(center: Vec, radius: f64, color: Color, reflectance: f64, material: &'a Material) -> Self {
+        Self { center, radius, color, reflectance, material }
     }
 
     fn surface_normal(&self, point: Vec) -> Vec {
@@ -25,7 +26,7 @@ impl Sphere {
     }
 }
 
-impl Hittable for Sphere {
+impl<'a> Hittable for Sphere<'a> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center;
         let dot = ray.direction.normalize().dot(oc);
@@ -49,7 +50,7 @@ impl Hittable for Sphere {
             let normal = self.surface_normal(p);
             let color = self.color_at(p);
 
-            Some(Hit { t, p, normal, color, reflectance: self.reflectance })
+            Some(Hit { t, p, normal, color, reflectance: self.reflectance, material: self.material })
         } else {
             None
         }

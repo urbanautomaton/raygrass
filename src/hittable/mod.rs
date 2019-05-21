@@ -1,14 +1,15 @@
 use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
+use crate::material::Material;
 
-#[derive(Debug, PartialEq)]
-pub struct Hit {
+pub struct Hit<'a> {
     pub t: f64,
     pub p: Vec,
     pub normal: Vec,
     pub color: Color,
     pub reflectance: f64,
+    pub material: &'a Material,
 }
 
 pub trait Hittable {

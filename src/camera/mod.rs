@@ -55,7 +55,7 @@ impl Camera {
         Ray { origin: self.eye, direction }
     }
 
-    fn ray_hit(&self, objects: &[Box<Hittable>], ray: Ray) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable>], ray: Ray) -> Option<Hit> {
         objects.iter()
             .filter_map(|o| o.hit(&ray, 0.0, std::f64::INFINITY))
             .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal))
@@ -79,10 +79,7 @@ impl Camera {
             let surface_color = hit.color;
             let illuminated_color = surface_color.scale(energy).scale(1.0 - hit.reflectance);
 
-            let dot = ray.direction.dot(normal);
-            let reflection_direction = ray.direction - normal * (2.0 * dot);
-            let reflection_point = intersection + normal * 1e-10;
-            let reflection_ray = Ray { origin: reflection_point, direction: reflection_direction };
+            let reflection_ray = hit.material.scatter(&ray, &intersection, &normal);
 
             if let Some(incoming_color) = self.trace(objects, lights, reflection_ray, remaining_calls - 1) {
                 let reflection_color = surface_color.scale(hit.reflectance / 255.0);

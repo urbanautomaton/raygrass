@@ -2,18 +2,19 @@ use crate::hittable::*;
 use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
+use crate::material::Material;
 
-#[derive(Debug)]
-pub struct Plane {
+pub struct Plane<'a> {
     point: Vec,
     normal: Vec,
     pub color: Color,
     pub reflectance: f64,
+    pub material: &'a Material,
 }
 
-impl Plane {
-    pub fn new(point: Vec, normal: Vec, color: Color, reflectance: f64) -> Self {
-        Self { point, normal, color, reflectance }
+impl<'a> Plane<'a> {
+    pub fn new(point: Vec, normal: Vec, color: Color, reflectance: f64, material: &'a Material) -> Self {
+        Self { point, normal, color, reflectance, material }
     }
 
     fn color_at(&self, point: Vec) -> Color {
@@ -25,7 +26,7 @@ impl Plane {
     }
 }
 
-impl Hittable for Plane {
+impl<'a> Hittable for Plane<'a> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let ndotl = self.normal.dot(ray.direction);
 
@@ -44,7 +45,8 @@ impl Hittable for Plane {
                     p,
                     normal: self.normal,
                     color,
-                    reflectance: self.reflectance
+                    reflectance: self.reflectance,
+                    material: self.material,
                 })
             }
         }
