@@ -20,7 +20,7 @@ pub struct Camera {
 
 impl Camera {
 
-    pub fn capture(&self, objects: &[Box<Hittable>], lights: &[Light], outfile: &str) -> () {
+    pub fn capture(&self, objects: &[Box<Hittable>], lights: &[Light], outfile: &str) {
         let mut buf = image::ImageBuffer::new(self.img_x, self.img_y);
 
         for (x, y, pixel) in buf.enumerate_pixels_mut() {
@@ -40,15 +40,15 @@ impl Camera {
             }
 
 
-            *pixel = image::Rgb([(r / self.samples as f64) as u8, (g / self.samples as f64) as u8, (b / self.samples as f64) as u8]);
+            *pixel = image::Rgb([(r / f64::from(self.samples)) as u8, (g / f64::from(self.samples)) as u8, (b / f64::from(self.samples)) as u8]);
         }
 
         buf.save(outfile).expect("Saving image failed");
     }
 
     fn ray_for_pixel(&self, x: u32, y: u32) -> Ray {
-        let x_frac = x as f64 / self.img_x as f64 + random::<f64>() / self.img_x as f64;
-        let y_frac = y as f64 / self.img_y as f64 + random::<f64>() / self.img_y as f64;
+        let x_frac = f64::from(x) / f64::from(self.img_x) + random::<f64>() / f64::from(self.img_x);
+        let y_frac = f64::from(y) / f64::from(self.img_y) + random::<f64>() / f64::from(self.img_y);
 
         let direction = (self.film.project(x_frac, y_frac) - self.eye).normalize();
 
@@ -62,7 +62,7 @@ impl Camera {
     }
 
     fn trace(&self, objects: &[Box<Hittable>], lights: &[Light], ray: Ray, remaining_calls: u32) -> Option<Color> {
-        if remaining_calls <= 0 {
+        if remaining_calls == 0 {
             return None;
         }
 

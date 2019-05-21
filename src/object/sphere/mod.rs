@@ -43,7 +43,7 @@ impl Hittable for Sphere {
             .filter(|t| *t >= t_min && *t <= t_max)
             .collect();
 
-        if valid_ts.len() > 0 {
+        if !valid_ts.is_empty() {
             let t = valid_ts[0];
             let p = ray.at(t);
             let normal = self.surface_normal(p);
