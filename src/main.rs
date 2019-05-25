@@ -17,6 +17,7 @@ use light::Light;
 use film::Film;
 use camera::Camera;
 use material::ReflectiveMaterial;
+use material::FuzzyReflectiveMaterial;
 
 fn main() {
     let eye = Vec::new(0.0, 0.0, 0.3);
@@ -25,7 +26,7 @@ fn main() {
 
     let objects: std::vec::Vec<Box<Hittable>> = vec![
         Box::new(Sphere::new(Vec::new(-1.0, 1.0, 5.0), 0.8, Color::new(255.0, 50.0,  50.0),  0.05, &ReflectiveMaterial {})),
-        Box::new(Sphere::new(Vec::new(1.0,  1.0, 5.0), 0.8, Color::new(50.0,  255.0, 100.0), 0.8, &ReflectiveMaterial {})),
+        Box::new(Sphere::new(Vec::new(1.0,  1.0, 5.0), 0.8, Color::new(50.0,  255.0, 100.0), 0.8, &FuzzyReflectiveMaterial { fuzz: 0.1 })),
         Box::new(Sphere::new(Vec::new(2.5,  1.0, 5.0), 0.8, Color::new(50.0,  100.0, 255.0), 0.0, &ReflectiveMaterial {})),
         Box::new(Sphere::new(Vec::new(-1.0, 2.0, 4.0), 0.2, Color::new(220.0, 220.0, 75.0),  0.7, &ReflectiveMaterial {})),
 
