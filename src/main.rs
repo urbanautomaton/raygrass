@@ -9,7 +9,7 @@ mod hittable;
 mod material;
 
 use vector::Vec;
-use color::Color;
+use color::*;
 use hittable::*;
 use object::sphere::Sphere;
 use object::plane::Plane;
@@ -25,12 +25,12 @@ fn main() {
     let camera = Camera { eye, film, img_x: 1600, img_y: 1200, samples: 20 };
 
     let objects: std::vec::Vec<Box<Hittable>> = vec![
-        Box::new(Sphere::new(Vec::new(-1.0, 1.0, 5.0), 0.8, Color::new(255.0, 50.0,  50.0),  0.05, &ReflectiveMaterial {})),
-        Box::new(Sphere::new(Vec::new(1.0,  1.0, 5.0), 0.8, Color::new(50.0,  255.0, 100.0), 0.8, &FuzzyReflectiveMaterial { fuzz: 0.1 })),
-        Box::new(Sphere::new(Vec::new(2.5,  1.0, 5.0), 0.8, Color::new(50.0,  100.0, 255.0), 0.0, &ReflectiveMaterial {})),
-        Box::new(Sphere::new(Vec::new(-1.0, 2.0, 4.0), 0.2, Color::new(220.0, 220.0, 75.0),  0.7, &ReflectiveMaterial {})),
+        Box::new(Sphere::new(Vec::new(-1.0, 1.0, 5.0), 0.8, rgb!(255.0, 50.0,  50.0),  0.05, &ReflectiveMaterial {})),
+        Box::new(Sphere::new(Vec::new(1.0,  1.0, 5.0), 0.8, rgb!(50.0,  255.0, 100.0), 0.8, &FuzzyReflectiveMaterial { fuzz: 0.1 })),
+        Box::new(Sphere::new(Vec::new(2.5,  1.0, 5.0), 0.8, rgb!(50.0,  100.0, 255.0), 0.0, &ReflectiveMaterial {})),
+        Box::new(Sphere::new(Vec::new(-1.0, 2.0, 4.0), 0.2, rgb!(220.0, 220.0, 75.0),  0.7, &ReflectiveMaterial {})),
 
-        Box::new(Plane::new(Vec::new(0.0, -1.0, 0.0), Vec::new(0.0, 1.0, 0.0), Color::new(100.0, 100.0, 100.0), 0.0, &ReflectiveMaterial {})),
+        Box::new(Plane::new(Vec::new(0.0, -1.0, 0.0), Vec::new(0.0, 1.0, 0.0), rgb!(100.0, 100.0, 100.0), 0.0, &ReflectiveMaterial {})),
     ];
 
     let lights = vec![
