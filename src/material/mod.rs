@@ -32,3 +32,28 @@ impl Material for FuzzyReflectiveMaterial {
         Ray { origin: reflection_point, direction: (reflection_direction + fuzz_vector).normalize() }
     }
 }
+
+pub struct LambertianMaterial { }
+
+impl LambertianMaterial {
+    fn random_in_unit_sphere() -> Vec {
+        let mut vec;
+
+        loop {
+            vec = Vec::new(random::<f64>(), random::<f64>(), random::<f64>());
+
+            if vec.length() <= 1.0 {
+                break vec
+            }
+        }
+    }
+}
+
+impl Material for LambertianMaterial {
+    fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
+        let direction = (Self::random_in_unit_sphere() + normal.normalize()).normalize();
+        let origin = *intersection + *normal * 1e-10;
+
+        Ray { origin, direction }
+    }
+}

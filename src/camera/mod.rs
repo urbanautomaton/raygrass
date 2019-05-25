@@ -61,6 +61,17 @@ impl Camera {
             .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal))
     }
 
+    fn ray_color(ray: &Ray) -> Color {
+        let unit_direction = ray.direction.normalize();
+        let t = 0.5 * (unit_direction.y + 1.0);
+
+        Color::new(
+            1.0 - 0.5 * t,
+            1.0 - 0.3 * t,
+            1.0,
+        ).scale(255.0)
+    }
+
     fn trace(&self, objects: &[Box<Hittable>], lights: &[Light], ray: Ray, remaining_calls: u32) -> Option<Color> {
         if remaining_calls == 0 {
             return None;
@@ -94,7 +105,7 @@ impl Camera {
                 Some(illuminated_color)
             }
         } else {
-            None
+            Some(Self::ray_color(&ray))
         }
     }
 }
