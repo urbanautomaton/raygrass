@@ -57,7 +57,7 @@ impl Camera {
 
     fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable>], ray: Ray) -> Option<Hit> {
         objects.iter()
-            .filter_map(|o| o.hit(&ray, 0.0, std::f64::INFINITY))
+            .filter_map(|o| o.hit(&ray, 1e-10, std::f64::INFINITY))
             .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal))
     }
 
