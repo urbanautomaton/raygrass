@@ -82,23 +82,39 @@ impl DielectricMaterial {
 
         Ray { origin, direction }
     }
+
+    fn schlick(&self, cosine: f64) -> f64 {
+        let r0 = ((1.0 - self.refractive_index) / (1.0 + self.refractive_index)).powi(2);
+
+        r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
+    }
 }
 
 impl Material for DielectricMaterial {
     fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
         let outward_normal;
         let ni_over_nt;
+        let cosine;
+        let rdotn = ray_in.direction.normalize().dot(*normal);
 
-        if ray_in.direction.dot(*normal) > 0.0 {
+        if rdotn > 0.0 {
             outward_normal = *normal * -1.0;
             ni_over_nt = self.refractive_index;
+            cosine = self.refractive_index * rdotn;
         } else {
             outward_normal = *normal;
             ni_over_nt = 1.0 / self.refractive_index;
+            cosine = -rdotn;
         }
 
+        let reflect_prob = self.schlick(cosine);
+
         if let Some(refracted) = Self::refract(&ray_in.direction, &outward_normal, ni_over_nt) {
-            Ray { origin: *intersection, direction: refracted.normalize() }
+            if random::<f64>() < reflect_prob {
+                Self::reflect(ray_in, intersection, normal)
+            } else {
+                Ray { origin: *intersection, direction: refracted.normalize() }
+            }
         } else {
             Self::reflect(ray_in, intersection, normal)
         }
