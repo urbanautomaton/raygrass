@@ -1,7 +1,10 @@
 extern crate image;
+extern crate indicatif;
 
 use std::cmp::Ordering;
 use rand::prelude::*;
+
+use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::vector::Vec;
 use crate::color::Color;
@@ -22,8 +25,14 @@ impl Camera {
 
     pub fn capture(&self, objects: &[Box<Hittable>], lights: &[Light], outfile: &str) {
         let mut buf = image::ImageBuffer::new(self.img_x, self.img_y);
+        let pb = ProgressBar::new((self.img_x * self.img_y).into());
+        pb.set_style(ProgressStyle::default_bar()
+                     .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {percent}% ({eta})")
+                     .progress_chars("#>-"));
 
         for (x, y, pixel) in buf.enumerate_pixels_mut() {
+            pb.set_position((x + y * x).into());
+
             let mut r: f64 = 0.0;
             let mut g: f64 = 0.0;
             let mut b: f64 = 0.0;
