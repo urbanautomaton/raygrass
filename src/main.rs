@@ -19,8 +19,8 @@ use camera::Camera;
 use material::*;
 
 fn main() {
-    let eye = Vec::new(0.0, 0.0, 0.3);
-    let film = Film::new(Vec::new(-0.8, 1.2, 1.3), Vec::new(1.2, -0.3, 1.3));
+    let eye = Vec::new(0.0, 0.8, 0.3);
+    let film = Film::new(Vec::new(-0.8, 1.5, 1.3), Vec::new(1.2, 0.0, 1.3));
     let camera = Camera { eye, film, img_x: 1600, img_y: 1200, samples: 10 };
 
     let objects: std::vec::Vec<Box<Hittable>> = vec![
