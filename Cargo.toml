@@ -6,7 +6,8 @@ edition = "2018"
 description = "A terrible rust version of pbrt"
 
 [dependencies]
-image = "0.21.0"
+image = "0.21.1"
 num-complex = "0.2.1"
 rand = "0.6.5"
 indicatif = "0.11.0"
+rayon = "1.0.3"

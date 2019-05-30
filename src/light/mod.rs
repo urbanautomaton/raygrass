@@ -12,7 +12,7 @@ impl Light {
         Light { center, power }
     }
 
-    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Box<Hittable>]) -> f64 {
+    pub fn illuminate(&self, point: Vec, normal: Vec, objects: &[Box<Hittable + Sync + Send>]) -> f64 {
         let point_to_light = self.center - point;
         let length = point_to_light.length();
 

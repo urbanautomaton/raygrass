@@ -1,19 +1,21 @@
+use std::sync::Arc;
+
 use crate::hittable::*;
 use crate::vector::Vec;
 use crate::ray::Ray;
 use crate::color::Color;
 use crate::material::Material;
 
-pub struct Plane<'a> {
+pub struct Plane {
     point: Vec,
     normal: Vec,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a Material,
+    pub material: Arc<Material + Send + Sync>,
 }
 
-impl<'a> Plane<'a> {
-    pub fn new(point: Vec, normal: Vec, color: Color, reflectance: f64, material: &'a Material) -> Self {
+impl Plane {
+    pub fn new(point: Vec, normal: Vec, color: Color, reflectance: f64, material: Arc<Material + Send + Sync>) -> Self {
         Self { point, normal, color, reflectance, material }
     }
 
@@ -26,7 +28,7 @@ impl<'a> Plane<'a> {
     }
 }
 
-impl<'a> Hittable for Plane<'a> {
+impl Hittable for Plane {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let ndotl = self.normal.dot(ray.direction);
 
@@ -46,7 +48,7 @@ impl<'a> Hittable for Plane<'a> {
                     normal: self.normal,
                     color,
                     reflectance: self.reflectance,
-                    material: self.material,
+                    material: Arc::clone(&self.material),
                 })
             }
         }
