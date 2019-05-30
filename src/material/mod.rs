@@ -1,19 +1,22 @@
-use rand::prelude::*;
-use crate::vector::Vec;
 use crate::ray::Ray;
+use crate::vector::Vec;
+use rand::prelude::*;
 
 pub trait Material {
     fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray;
 }
 
-pub struct ReflectiveMaterial { }
+pub struct ReflectiveMaterial {}
 
 impl Material for ReflectiveMaterial {
     fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
-        Ray { origin: *intersection, direction: reflection_direction.normalize() }
+        Ray {
+            origin: *intersection,
+            direction: reflection_direction.normalize(),
+        }
     }
 }
 
@@ -27,11 +30,14 @@ impl Material for FuzzyReflectiveMaterial {
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
         let fuzz_vector = Vec::new(random::<f64>(), random::<f64>(), random::<f64>()) * self.fuzz;
 
-        Ray { origin: *intersection, direction: (reflection_direction + fuzz_vector).normalize() }
+        Ray {
+            origin: *intersection,
+            direction: (reflection_direction + fuzz_vector).normalize(),
+        }
     }
 }
 
-pub struct LambertianMaterial { }
+pub struct LambertianMaterial {}
 
 impl LambertianMaterial {
     fn random_in_unit_sphere() -> Vec {
@@ -41,7 +47,7 @@ impl LambertianMaterial {
             vec = Vec::new(random::<f64>(), random::<f64>(), random::<f64>());
 
             if vec.length() <= 1.0 {
-                break vec
+                break vec;
             }
         }
     }
@@ -113,7 +119,10 @@ impl Material for DielectricMaterial {
             if random::<f64>() < reflect_prob {
                 Self::reflect(ray_in, intersection, normal)
             } else {
-                Ray { origin: *intersection, direction: refracted.normalize() }
+                Ray {
+                    origin: *intersection,
+                    direction: refracted.normalize(),
+                }
             }
         } else {
             Self::reflect(ray_in, intersection, normal)

@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use crate::vector::Vec;
-use crate::ray::Ray;
 use crate::color::Color;
 use crate::material::Material;
+use crate::ray::Ray;
+use crate::vector::Vec;
 
 pub struct Hit {
     pub t: f64,

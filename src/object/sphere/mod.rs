@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use crate::hittable::*;
-use crate::vector::Vec;
-use crate::ray::Ray;
 use crate::color::Color;
+use crate::hittable::*;
 use crate::material::Material;
+use crate::ray::Ray;
+use crate::vector::Vec;
 
 pub struct Sphere {
     center: Vec,
@@ -15,8 +15,20 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new(center: Vec, radius: f64, color: Color, reflectance: f64, material: Arc<Material + Send + Sync>) -> Self {
-        Self { center, radius, color, reflectance, material }
+    pub fn new(
+        center: Vec,
+        radius: f64,
+        color: Color,
+        reflectance: f64,
+        material: Arc<Material + Send + Sync>,
+    ) -> Self {
+        Self {
+            center,
+            radius,
+            color,
+            reflectance,
+            material,
+        }
     }
 
     fn surface_normal(&self, point: Vec) -> Vec {
@@ -36,7 +48,9 @@ impl Hittable for Sphere {
         let a = dot.powi(2);
         let b = oc.length().powi(2) - self.radius.powi(2);
 
-        if a < b { return None; }
+        if a < b {
+            return None;
+        }
 
         let sqrt = (a - b).sqrt();
         let ts = vec![-dot - sqrt, -dot + sqrt];
@@ -52,7 +66,14 @@ impl Hittable for Sphere {
             let normal = self.surface_normal(p);
             let color = self.color_at(p);
 
-            Some(Hit { t, p, normal, color, reflectance: self.reflectance, material: Arc::clone(&self.material) })
+            Some(Hit {
+                t,
+                p,
+                normal,
+                color,
+                reflectance: self.reflectance,
+                material: Arc::clone(&self.material),
+            })
         } else {
             None
         }

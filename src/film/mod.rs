@@ -21,8 +21,7 @@ impl Film {
         Vec::new(
             self.top_left.x + (x * self.width),
             self.top_left.y - (y * self.height),
-            self.z
+            self.z,
         )
     }
 }
-
