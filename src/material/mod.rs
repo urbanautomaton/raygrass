@@ -28,11 +28,18 @@ impl Material for FuzzyReflectiveMaterial {
     fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
-        let fuzz_vector = Vec::new(random::<f64>(), random::<f64>(), random::<f64>()) * self.fuzz;
 
-        Ray {
-            origin: *intersection,
-            direction: (reflection_direction + fuzz_vector).normalize(),
+        loop {
+            let fuzz_vector =
+                Vec::new(random::<f64>(), random::<f64>(), random::<f64>()) * self.fuzz;
+            let scattered = reflection_direction + fuzz_vector;
+
+            if scattered.dot(*normal) > 0.0 {
+                break Ray {
+                    origin: *intersection,
+                    direction: scattered.normalize(),
+                };
+            }
         }
     }
 }
