@@ -25,12 +25,7 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn capture(
-        &self,
-        objects: &[Box<Hittable + Sync + Send>],
-        lights: &[Light],
-        outfile: &str,
-    ) {
+    pub fn capture(&self, objects: &[&(Hittable + Sync + Send)], lights: &[Light], outfile: &str) {
         let buf = Arc::new(Mutex::new(image::ImageBuffer::new(self.img_x, self.img_y)));
         let pb = ProgressBar::new((self.img_x * self.img_y).into());
         pb.set_style(
@@ -94,7 +89,7 @@ impl Camera {
         }
     }
 
-    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &[&'a (Hittable + Sync + Send)], ray: Ray) -> Option<Hit> {
         objects
             .iter()
             .filter_map(|o| o.hit(&ray, 1e-10, std::f64::INFINITY))
@@ -110,7 +105,7 @@ impl Camera {
 
     fn trace(
         &self,
-        objects: &[Box<Hittable + Sync + Send>],
+        objects: &[&(Hittable + Sync + Send)],
         lights: &[Light],
         ray: Ray,
         remaining_calls: u32,

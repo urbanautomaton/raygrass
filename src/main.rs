@@ -32,53 +32,60 @@ fn main() {
         samples: cli_args.samples(),
     };
 
-    let objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
-        Box::new(Sphere::new(
-            Vec::new(-1.0, -0.2, 5.0),
-            0.8,
-            rgb!(255.0, 255.0, 255.0),
-            1.0,
-            &DielectricMaterial {
-                refractive_index: 1.3,
-            },
-        )),
-        Box::new(Sphere::new(
-            Vec::new(1.2, 0.0, 3.0),
-            0.4,
-            rgb!(255.0, 255.0, 255.0),
-            1.0,
-            &DielectricMaterial {
-                refractive_index: 1.3,
-            },
-        )),
-        Box::new(Sphere::new(
-            Vec::new(1.0, -0.2, 5.0),
-            0.8,
-            rgb!(50.0, 255.0, 100.0),
-            1.0,
-            &FuzzyReflectiveMaterial { fuzz: 0.1 },
-        )),
-        Box::new(Sphere::new(
-            Vec::new(2.5, -0.2, 5.0),
-            0.8,
-            rgb!(50.0, 100.0, 255.0),
-            1.0,
-            &LambertianMaterial {},
-        )),
-        Box::new(Sphere::new(
-            Vec::new(-1.0, 2.0, 4.0),
-            0.2,
-            rgb!(220.0, 220.0, 75.0),
-            1.0,
-            &ReflectiveMaterial {},
-        )),
-        Box::new(Plane::new(
-            Vec::new(0.0, -1.0, 0.0),
-            Vec::new(0.0, 1.0, 0.0),
-            rgb!(100.0, 100.0, 100.0),
-            1.0,
-            &LambertianMaterial {},
-        )),
+    let glass_sphere = Sphere::new(
+        Vec::new(-1.0, -0.2, 5.0),
+        0.8,
+        rgb!(255.0, 255.0, 255.0),
+        1.0,
+        &DielectricMaterial {
+            refractive_index: 1.3,
+        },
+    );
+    let small_glass_sphere = Sphere::new(
+        Vec::new(1.2, 0.0, 3.0),
+        0.4,
+        rgb!(255.0, 255.0, 255.0),
+        1.0,
+        &DielectricMaterial {
+            refractive_index: 1.3,
+        },
+    );
+    let fuzzy_green_sphere = Sphere::new(
+        Vec::new(1.0, -0.2, 5.0),
+        0.8,
+        rgb!(50.0, 255.0, 100.0),
+        1.0,
+        &FuzzyReflectiveMaterial { fuzz: 0.1 },
+    );
+    let blue_sphere = Sphere::new(
+        Vec::new(2.5, -0.2, 5.0),
+        0.8,
+        rgb!(50.0, 100.0, 255.0),
+        1.0,
+        &LambertianMaterial {},
+    );
+    let yellow_sphere = Sphere::new(
+        Vec::new(-1.0, 2.0, 4.0),
+        0.2,
+        rgb!(220.0, 220.0, 75.0),
+        1.0,
+        &ReflectiveMaterial {},
+    );
+    let checkerboard = Plane::new(
+        Vec::new(0.0, -1.0, 0.0),
+        Vec::new(0.0, 1.0, 0.0),
+        rgb!(100.0, 100.0, 100.0),
+        1.0,
+        &LambertianMaterial {},
+    );
+
+    let objects: std::vec::Vec<&(Hittable + Send + Sync)> = vec![
+        &glass_sphere,
+        &small_glass_sphere,
+        &fuzzy_green_sphere,
+        &blue_sphere,
+        &yellow_sphere,
+        &checkerboard,
     ];
 
     let lights = vec![
