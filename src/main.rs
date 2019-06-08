@@ -24,8 +24,6 @@ use vector::Vec;
 fn main() {
     let cli_args = cli::CLI::new();
 
-    let samples = cli_args.samples();
-
     let eye = Vec::new(0.0, 0.3, 0.3);
     let film = Film::new(Vec::new(-0.8, 1.0, 1.3), Vec::new(1.2, -0.5, 1.3));
     let camera = Camera {
@@ -33,7 +31,7 @@ fn main() {
         film,
         img_x: 1600,
         img_y: 1200,
-        samples: samples,
+        samples: cli_args.samples(),
     };
 
     let objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
