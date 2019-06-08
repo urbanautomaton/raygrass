@@ -29,10 +29,11 @@ impl<'a> CLI<'a> {
     }
 
     pub fn samples(&self) -> u32 {
-        self.matches
-            .value_of("samples")
-            .unwrap_or("100")
-            .parse()
-            .unwrap()
+        let val = self.matches.value_of("samples").unwrap_or("100");
+
+        val.parse().unwrap_or_else(|_| {
+            println!("Invalid samples value '{}'", val);
+            100
+        })
     }
 }
