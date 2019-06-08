@@ -1,26 +1,24 @@
-use std::sync::Arc;
-
 use crate::color::Color;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec;
 
-pub struct Sphere {
+pub struct Sphere<'a> {
     center: Vec,
     radius: f64,
     pub color: Color,
     pub reflectance: f64,
-    pub material: Arc<Material + Send + Sync>,
+    pub material: &'a (Material + Send + Sync),
 }
 
-impl Sphere {
+impl<'a> Sphere<'a> {
     pub fn new(
         center: Vec,
         radius: f64,
         color: Color,
         reflectance: f64,
-        material: Arc<Material + Send + Sync>,
+        material: &'a (Material + Send + Sync),
     ) -> Self {
         Self {
             center,
@@ -40,7 +38,7 @@ impl Sphere {
     }
 }
 
-impl Hittable for Sphere {
+impl<'a> Hittable for Sphere<'a> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center;
         let dot = ray.direction.normalize().dot(oc);
@@ -72,7 +70,7 @@ impl Hittable for Sphere {
                 normal,
                 color,
                 reflectance: self.reflectance,
-                material: Arc::clone(&self.material),
+                material: self.material,
             })
         } else {
             None

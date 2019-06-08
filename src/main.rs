@@ -9,8 +9,6 @@ mod object;
 mod ray;
 mod vector;
 
-use std::sync::Arc;
-
 use camera::Camera;
 use color::*;
 use film::Film;
@@ -40,46 +38,46 @@ fn main() {
             0.8,
             rgb!(255.0, 255.0, 255.0),
             1.0,
-            Arc::new(DielectricMaterial {
+            &DielectricMaterial {
                 refractive_index: 1.3,
-            }),
+            },
         )),
         Box::new(Sphere::new(
             Vec::new(1.2, 0.0, 3.0),
             0.4,
             rgb!(255.0, 255.0, 255.0),
             1.0,
-            Arc::new(DielectricMaterial {
+            &DielectricMaterial {
                 refractive_index: 1.3,
-            }),
+            },
         )),
         Box::new(Sphere::new(
             Vec::new(1.0, -0.2, 5.0),
             0.8,
             rgb!(50.0, 255.0, 100.0),
             1.0,
-            Arc::new(FuzzyReflectiveMaterial { fuzz: 0.1 }),
+            &FuzzyReflectiveMaterial { fuzz: 0.1 },
         )),
         Box::new(Sphere::new(
             Vec::new(2.5, -0.2, 5.0),
             0.8,
             rgb!(50.0, 100.0, 255.0),
             1.0,
-            Arc::new(LambertianMaterial {}),
+            &LambertianMaterial {},
         )),
         Box::new(Sphere::new(
             Vec::new(-1.0, 2.0, 4.0),
             0.2,
             rgb!(220.0, 220.0, 75.0),
             1.0,
-            Arc::new(ReflectiveMaterial {}),
+            &ReflectiveMaterial {},
         )),
         Box::new(Plane::new(
             Vec::new(0.0, -1.0, 0.0),
             Vec::new(0.0, 1.0, 0.0),
             rgb!(100.0, 100.0, 100.0),
             1.0,
-            Arc::new(LambertianMaterial {}),
+            &LambertianMaterial {},
         )),
     ];
 
