@@ -3,20 +3,20 @@ use crate::vector::Vec;
 use rand::prelude::*;
 
 pub trait Material {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray;
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray>;
 }
 
 pub struct ReflectiveMaterial {}
 
 impl Material for ReflectiveMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
-        Ray {
+        Some(Ray {
             origin: *intersection,
             direction: reflection_direction.normalize(),
-        }
+        })
     }
 }
 
@@ -25,21 +25,20 @@ pub struct FuzzyReflectiveMaterial {
 }
 
 impl Material for FuzzyReflectiveMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
-        loop {
-            let fuzz_vector =
-                Vec::new(random::<f64>(), random::<f64>(), random::<f64>()) * self.fuzz;
-            let scattered = reflection_direction + fuzz_vector;
+        let fuzz_vector = Vec::new(random::<f64>(), random::<f64>(), random::<f64>()) * self.fuzz;
+        let scattered = reflection_direction + fuzz_vector;
 
-            if scattered.dot(*normal) > 0.0 {
-                break Ray {
-                    origin: *intersection,
-                    direction: scattered.normalize(),
-                };
-            }
+        if scattered.dot(*normal) > 0.0 {
+            Some(Ray {
+                origin: *intersection,
+                direction: scattered.normalize(),
+            })
+        } else {
+            None
         }
     }
 }
@@ -61,11 +60,11 @@ impl LambertianMaterial {
 }
 
 impl Material for LambertianMaterial {
-    fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
+    fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
         let direction = (Self::random_in_unit_sphere() + normal.normalize()).normalize();
         let origin = *intersection;
 
-        Ray { origin, direction }
+        Some(Ray { origin, direction })
     }
 }
 
@@ -88,12 +87,12 @@ impl DielectricMaterial {
         }
     }
 
-    fn reflect(ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
+    fn reflect(ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let direction = (ray_in.direction - *normal * (2.0 * dot)).normalize();
         let origin = *intersection;
 
-        Ray { origin, direction }
+        Some(Ray { origin, direction })
     }
 
     fn schlick(&self, cosine: f64) -> f64 {
@@ -104,7 +103,7 @@ impl DielectricMaterial {
 }
 
 impl Material for DielectricMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Ray {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
         let outward_normal;
         let ni_over_nt;
         let cosine;
@@ -126,10 +125,10 @@ impl Material for DielectricMaterial {
             if random::<f64>() < reflect_prob {
                 Self::reflect(ray_in, intersection, normal)
             } else {
-                Ray {
+                Some(Ray {
                     origin: *intersection,
                     direction: refracted.normalize(),
-                }
+                })
             }
         } else {
             Self::reflect(ray_in, intersection, normal)

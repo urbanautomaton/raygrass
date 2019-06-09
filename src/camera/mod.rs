@@ -119,17 +119,20 @@ impl Camera {
             let surface_color = hit.color;
             let illuminated_color = surface_color.scale(energy).scale(1.0 - hit.reflectance);
 
-            let reflection_ray = hit.material.scatter(&ray, &intersection, &normal);
+            if let Some(reflection_ray) = hit.material.scatter(&ray, &intersection, &normal) {
+                if let Some(incoming_color) = self.trace(scene, reflection_ray, remaining_calls - 1)
+                {
+                    let reflection_color = surface_color.scale(hit.reflectance / 255.0);
+                    let reflected_color = Color::new(
+                        incoming_color.r * reflection_color.r,
+                        incoming_color.g * reflection_color.g,
+                        incoming_color.b * reflection_color.b,
+                    );
 
-            if let Some(incoming_color) = self.trace(scene, reflection_ray, remaining_calls - 1) {
-                let reflection_color = surface_color.scale(hit.reflectance / 255.0);
-                let reflected_color = Color::new(
-                    incoming_color.r * reflection_color.r,
-                    incoming_color.g * reflection_color.g,
-                    incoming_color.b * reflection_color.b,
-                );
-
-                Some(illuminated_color.add(reflected_color))
+                    Some(illuminated_color.add(reflected_color))
+                } else {
+                    Some(illuminated_color)
+                }
             } else {
                 Some(illuminated_color)
             }
