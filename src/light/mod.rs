@@ -21,10 +21,7 @@ impl Light {
         let point_to_light = self.center - point;
         let length = point_to_light.length();
 
-        let shadow_ray = Ray {
-            origin: point,
-            direction: point_to_light.normalize(),
-        };
+        let shadow_ray = Ray::new(point, point_to_light);
 
         let occluded = objects
             .iter()

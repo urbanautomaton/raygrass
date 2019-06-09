@@ -7,6 +7,13 @@ pub struct Ray {
 }
 
 impl Ray {
+    pub fn new(origin: Vec, direction: Vec) -> Self {
+        Self {
+            origin,
+            direction: direction.normalize(),
+        }
+    }
+
     pub fn at(&self, t: f64) -> Vec {
         self.origin + self.direction * t
     }

@@ -13,10 +13,7 @@ impl Material for ReflectiveMaterial {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
-        Some(Ray {
-            origin: *intersection,
-            direction: reflection_direction.normalize(),
-        })
+        Some(Ray::new(*intersection, reflection_direction))
     }
 }
 
@@ -33,10 +30,7 @@ impl Material for FuzzyReflectiveMaterial {
         let scattered = reflection_direction + fuzz_vector;
 
         if scattered.dot(*normal) > 0.0 {
-            Some(Ray {
-                origin: *intersection,
-                direction: scattered.normalize(),
-            })
+            Some(Ray::new(*intersection, scattered.normalize()))
         } else {
             None
         }
@@ -61,10 +55,9 @@ impl LambertianMaterial {
 
 impl Material for LambertianMaterial {
     fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
-        let direction = (Self::random_in_unit_sphere() + normal.normalize()).normalize();
-        let origin = *intersection;
+        let direction = Self::random_in_unit_sphere() + *normal;
 
-        Some(Ray { origin, direction })
+        Some(Ray::new(*intersection, direction))
     }
 }
 
@@ -89,10 +82,9 @@ impl DielectricMaterial {
 
     fn reflect(ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
-        let direction = (ray_in.direction - *normal * (2.0 * dot)).normalize();
-        let origin = *intersection;
+        let direction = ray_in.direction - *normal * (2.0 * dot);
 
-        Some(Ray { origin, direction })
+        Some(Ray::new(*intersection, direction))
     }
 
     fn schlick(&self, cosine: f64) -> f64 {
@@ -125,10 +117,7 @@ impl Material for DielectricMaterial {
             if random::<f64>() < reflect_prob {
                 Self::reflect(ray_in, intersection, normal)
             } else {
-                Some(Ray {
-                    origin: *intersection,
-                    direction: refracted.normalize(),
-                })
+                Some(Ray::new(*intersection, refracted))
             }
         } else {
             Self::reflect(ray_in, intersection, normal)

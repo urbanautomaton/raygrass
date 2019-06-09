@@ -22,7 +22,7 @@ impl<'a> Plane<'a> {
     ) -> Self {
         Self {
             point,
-            normal,
+            normal: normal.normalize(),
             color,
             reflectance,
             material,

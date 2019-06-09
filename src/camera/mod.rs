@@ -81,12 +81,9 @@ impl Camera {
         let x_frac = f64::from(x) / f64::from(self.img_x) + random::<f64>() / f64::from(self.img_x);
         let y_frac = f64::from(y) / f64::from(self.img_y) + random::<f64>() / f64::from(self.img_y);
 
-        let direction = (self.film.project(x_frac, y_frac) - self.eye).normalize();
+        let direction = self.film.project(x_frac, y_frac) - self.eye;
 
-        Ray {
-            origin: self.eye,
-            direction,
-        }
+        Ray::new(self.eye, direction)
     }
 
     fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
