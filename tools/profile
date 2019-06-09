@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: ${0} <PID>"
+}
+
+pid=${1:-''}
+
+[[ -z "${pid}" ]] && usage && exit 1
+
+sudo dtrace \
+  -p "${pid}" \
+  -o out/out.stacks \
+  -n 'profile-997 /execname == "raygrass"/ { @[ustack(100)] = count(); }'

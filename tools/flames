@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR=$(dirname "${0}")
+COLLAPSE="${DIR}/stackcollapse.pl"
+FLAME="${DIR}/flamegraph.pl"
+
+usage() {
+  echo "Usage: ${0} <STACKFILE>"
+}
+
+stackfile=${1:-''}
+
+[[ -z "${stackfile}" ]] && usage && exit 1
+
+${COLLAPSE} "${stackfile}" | ${FLAME} > out/flames.svg
