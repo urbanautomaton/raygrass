@@ -12,8 +12,8 @@ use indicatif::{ProgressBar, ProgressStyle};
 use crate::color::Color;
 use crate::film::Film;
 use crate::hittable::*;
-use crate::light::Light;
 use crate::ray::Ray;
+use crate::scene::Scene;
 use crate::vector::Vec;
 
 pub struct Camera {
@@ -25,7 +25,7 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn capture(&self, objects: &[&(Hittable + Sync + Send)], lights: &[Light], outfile: &str) {
+    pub fn capture(&self, scene: &Scene, outfile: &str) {
         let buf = Arc::new(Mutex::new(image::ImageBuffer::new(self.img_x, self.img_y)));
         let pb = ProgressBar::new((self.img_x * self.img_y).into());
         pb.set_style(
@@ -52,7 +52,7 @@ impl Camera {
                     let ray = self.ray_for_pixel(x, y);
 
                     let color = self
-                        .trace(objects, lights, ray, 50)
+                        .trace(scene, ray, 50)
                         .unwrap_or(Color::new(30.0, 30.0, 30.0));
 
                     r += color.r;
@@ -89,7 +89,7 @@ impl Camera {
         }
     }
 
-    fn ray_hit<'a>(&'a self, objects: &[&'a (Hittable + Sync + Send)], ray: Ray) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
         objects
             .iter()
             .filter_map(|o| o.hit(&ray, 1e-10, std::f64::INFINITY))
@@ -103,23 +103,17 @@ impl Camera {
         Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0).scale(255.0)
     }
 
-    fn trace(
-        &self,
-        objects: &[&(Hittable + Sync + Send)],
-        lights: &[Light],
-        ray: Ray,
-        remaining_calls: u32,
-    ) -> Option<Color> {
+    fn trace(&self, scene: &Scene, ray: Ray, remaining_calls: u32) -> Option<Color> {
         if remaining_calls == 0 {
             return None;
         }
 
-        if let Some(hit) = self.ray_hit(objects, ray) {
+        if let Some(hit) = self.ray_hit(&scene.objects, ray) {
             let intersection = hit.p;
             let normal = hit.normal;
 
-            let energy = lights.iter().fold(0.0, |acc, light| {
-                acc + light.illuminate(intersection, normal, objects)
+            let energy = scene.lights.iter().fold(0.0, |acc, light| {
+                acc + light.illuminate(intersection, normal, &scene.objects)
             });
 
             let surface_color = hit.color;
@@ -127,9 +121,7 @@ impl Camera {
 
             let reflection_ray = hit.material.scatter(&ray, &intersection, &normal);
 
-            if let Some(incoming_color) =
-                self.trace(objects, lights, reflection_ray, remaining_calls - 1)
-            {
+            if let Some(incoming_color) = self.trace(scene, reflection_ray, remaining_calls - 1) {
                 let reflection_color = surface_color.scale(hit.reflectance / 255.0);
                 let reflected_color = Color::new(
                     incoming_color.r * reflection_color.r,
