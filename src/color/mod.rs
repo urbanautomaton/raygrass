@@ -11,19 +11,11 @@ impl Color {
     }
 
     pub fn scale(&self, scalar: f64) -> Self {
-        Self::new(
-            (self.r * scalar).min(255.0),
-            (self.g * scalar).min(255.0),
-            (self.b * scalar).min(255.0),
-        )
+        Self::new(self.r * scalar, self.g * scalar, self.b * scalar)
     }
 
     pub fn add(&self, other: Self) -> Self {
-        Self::new(
-            (self.r + other.r).min(255.0),
-            (self.g + other.g).min(255.0),
-            (self.b + other.b).min(255.0),
-        )
+        Self::new(self.r + other.r, self.g + other.g, self.b + other.b)
     }
 }
 

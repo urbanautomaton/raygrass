@@ -45,28 +45,24 @@ impl Camera {
 
                 pb.inc(1);
 
-                let mut color_acc = (0., 0., 0.);
+                let mut color_acc = Color::new(0., 0., 0.);
 
                 for _ in 0..self.samples {
                     let ray = self.ray_for_pixel(x, y);
 
-                    let Color { r, g, b } = self
+                    let color = self
                         .trace(scene, ray, 50)
                         .unwrap_or_else(|| Color::new(30.0, 30.0, 30.0));
 
-                    color_acc.0 += r;
-                    color_acc.1 += g;
-                    color_acc.2 += b;
+                    color_acc = color_acc.add(color);
                 }
+
+                color_acc = color_acc.scale(1. / f64::from(self.samples));
 
                 buf.lock().unwrap().put_pixel(
                     x,
                     y,
-                    image::Rgb([
-                        (color_acc.0 / f64::from(self.samples)) as u8,
-                        (color_acc.1 / f64::from(self.samples)) as u8,
-                        (color_acc.2 / f64::from(self.samples)) as u8,
-                    ]),
+                    image::Rgb([color_acc.r as u8, color_acc.g as u8, color_acc.b as u8]),
                 );
             });
 
