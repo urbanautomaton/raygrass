@@ -19,6 +19,18 @@ impl Color {
     }
 }
 
+impl From<Color> for [u8; 3] {
+    fn from(color: Color) -> Self {
+        let clamp = std::u8::MAX as f64;
+
+        [
+            color.r.min(clamp) as u8,
+            color.g.min(clamp) as u8,
+            color.b.min(clamp) as u8,
+        ]
+    }
+}
+
 #[macro_export]
 macro_rules! rgb {
     ( $r:expr, $g:expr, $b:expr ) => {{

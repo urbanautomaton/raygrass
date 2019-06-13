@@ -59,11 +59,9 @@ impl Camera {
 
                 color_acc = color_acc.scale(1. / f64::from(self.samples));
 
-                buf.lock().unwrap().put_pixel(
-                    x,
-                    y,
-                    image::Rgb([color_acc.r as u8, color_acc.g as u8, color_acc.b as u8]),
-                );
+                buf.lock()
+                    .unwrap()
+                    .put_pixel(x, y, image::Rgb(color_acc.into()));
             });
 
         buf.lock()
