@@ -30,5 +30,5 @@ fn main() {
 
     let scene = Scene::new();
 
-    camera.capture(&scene, "out/render.png")
+    camera.capture(&scene, cli_args.outfile())
 }

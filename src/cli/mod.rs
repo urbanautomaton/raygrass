@@ -16,6 +16,12 @@ impl<'a> CLI<'a> {
             .about(PKG_DESCRIPTION)
             .author(PKG_AUTHORS)
             .arg(
+                clap::Arg::with_name("OUTFILE")
+                    .help("The output filename")
+                    .required(true)
+                    .index(1),
+            )
+            .arg(
                 clap::Arg::with_name("samples")
                     .short("s")
                     .long("samples")
@@ -35,5 +41,9 @@ impl<'a> CLI<'a> {
             println!("Invalid samples value '{}'", val);
             100
         })
+    }
+
+    pub fn outfile(&self) -> &str {
+        self.matches.value_of("OUTFILE").unwrap()
     }
 }
