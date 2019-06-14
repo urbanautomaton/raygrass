@@ -17,9 +17,7 @@ impl Vec {
     }
 
     pub fn normalize(&self) -> Vec {
-        let len = self.length();
-
-        Self::new(self.x / len, self.y / len, self.z / len)
+        *self / self.length()
     }
 
     pub fn dot(&self, other: Vec) -> f64 {
