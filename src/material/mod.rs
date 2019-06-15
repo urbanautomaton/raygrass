@@ -99,7 +99,7 @@ impl Material for DielectricMaterial {
         let outward_normal;
         let ni_over_nt;
         let cosine;
-        let rdotn = ray_in.direction.normalize().dot(*normal);
+        let rdotn = ray_in.direction.dot(*normal);
 
         if rdotn > 0.0 {
             outward_normal = *normal * -1.0;

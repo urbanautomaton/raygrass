@@ -87,8 +87,7 @@ impl Camera {
     }
 
     fn ray_color(ray: &Ray) -> Color {
-        let unit_direction = ray.direction.normalize();
-        let t = 0.5 * (unit_direction.y + 1.0);
+        let t = 0.5 * (ray.direction.y + 1.0);
 
         Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0).scale(255.0)
     }

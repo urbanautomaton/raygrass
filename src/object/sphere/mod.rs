@@ -41,7 +41,7 @@ impl<'a> Sphere<'a> {
 impl<'a> Hittable for Sphere<'a> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center;
-        let dot = ray.direction.normalize().dot(oc);
+        let dot = ray.direction.dot(oc);
 
         let a = dot.powi(2);
         let b = oc.length().powi(2) - self.radius.powi(2);
