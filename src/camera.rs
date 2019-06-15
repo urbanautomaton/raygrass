@@ -35,7 +35,7 @@ impl Camera {
                 )
                 .progress_chars("#>-"),
         );
-        pb.set_draw_delta((self.img_x * self.img_y / 200).into());
+        pb.set_draw_delta((self.img_x * self.img_y / (100 * self.samples)).into());
 
         (0..(self.img_x * self.img_y))
             .into_par_iter()
