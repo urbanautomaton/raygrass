@@ -51,30 +51,25 @@ impl<'a> Hittable for Sphere<'a> {
         }
 
         let sqrt = (a - b).sqrt();
-        let ts = vec![-dot - sqrt, -dot + sqrt];
 
-        let valid_ts: std::vec::Vec<f64> = ts
-            .into_iter()
-            .filter(|t| *t >= t_min && *t <= t_max)
-            .collect();
+        for t in &[-dot - sqrt, -dot + sqrt] {
+            if (t_min..t_max).contains(t) {
+                let p = ray.at(*t);
+                let normal = self.surface_normal(p);
+                let color = self.color_at(p);
 
-        if !valid_ts.is_empty() {
-            let t = valid_ts[0];
-            let p = ray.at(t);
-            let normal = self.surface_normal(p);
-            let color = self.color_at(p);
-
-            Some(Hit {
-                t,
-                p,
-                normal,
-                color,
-                reflectance: self.reflectance,
-                material: self.material,
-            })
-        } else {
-            None
+                return Some(Hit {
+                    t: *t,
+                    p,
+                    normal,
+                    color,
+                    reflectance: self.reflectance,
+                    material: self.material,
+                });
+            }
         }
+
+        return None;
     }
 }
 
