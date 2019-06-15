@@ -98,32 +98,22 @@ impl Camera {
         }
 
         if let Some(hit) = self.ray_hit(&scene.objects, ray) {
-            let intersection = hit.p;
-            let normal = hit.normal;
-
-            let energy = scene.lights.iter().fold(0.0, |acc, light| {
-                acc + light.illuminate(intersection, normal, &scene.objects)
-            });
-
-            let surface_color = hit.color;
-            let illuminated_color = surface_color.scale(energy).scale(1.0 - hit.reflectance);
-
-            if let Some(reflection_ray) = hit.material.scatter(&ray, &intersection, &normal) {
+            if let Some(reflection_ray) = hit.material.scatter(&ray, &hit.p, &hit.normal) {
                 if let Some(incoming_color) = self.trace(scene, reflection_ray, remaining_calls - 1)
                 {
-                    let reflection_color = surface_color.scale(hit.reflectance / 255.0);
+                    let reflection_color = hit.color.scale(hit.reflectance / 255.0);
                     let reflected_color = Color::new(
                         incoming_color.r * reflection_color.r,
                         incoming_color.g * reflection_color.g,
                         incoming_color.b * reflection_color.b,
                     );
 
-                    Some(illuminated_color.add(reflected_color))
+                    Some(reflected_color)
                 } else {
-                    Some(illuminated_color)
+                    None
                 }
             } else {
-                Some(illuminated_color)
+                None
             }
         } else {
             Some(Self::ray_color(&ray))
