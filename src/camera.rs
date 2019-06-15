@@ -4,7 +4,6 @@ extern crate rayon;
 
 use rand::prelude::*;
 use rayon::prelude::*;
-use std::cmp::Ordering;
 use std::sync::{Arc, Mutex};
 
 use indicatif::{ProgressBar, ProgressStyle};
@@ -80,10 +79,23 @@ impl Camera {
     }
 
     fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
-        objects
-            .iter()
-            .filter_map(|o| o.hit(&ray, 1e-10, std::f64::INFINITY))
-            .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap_or(Ordering::Equal))
+        let mut result: Option<Hit> = None;
+
+        for o in objects {
+            if let Some(hit) = o.hit(&ray, 1e-10, std::f64::INFINITY) {
+                if let Some(min_hit) = result {
+                    if hit.t < min_hit.t {
+                        result = Some(hit);
+                    } else {
+                        result = Some(min_hit);
+                    }
+                } else {
+                    result = Some(hit);
+                }
+            }
+        }
+
+        result
     }
 
     fn ray_color(ray: &Ray) -> Color {
