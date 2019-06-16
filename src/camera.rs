@@ -154,18 +154,19 @@ impl Camera {
         }
 
         if let Some(hit) = self.ray_hit(&scene.objects, ray) {
-            if let Some(reflection_ray) = hit.material.scatter(&ray, &hit.p, &hit.normal) {
-                let incoming_color = self.trace(scene, reflection_ray, remaining_calls - 1);
-                let reflection_color = hit.color.scale(hit.reflectance / 255.0);
-                let reflected_color = Color::new(
-                    incoming_color.r * reflection_color.r,
-                    incoming_color.g * reflection_color.g,
-                    incoming_color.b * reflection_color.b,
-                );
+            match hit.material.scatter(&ray, &hit.p, &hit.normal) {
+                Some(reflection_ray) => {
+                    let incoming_color = self.trace(scene, reflection_ray, remaining_calls - 1);
+                    let reflection_color = hit.color.scale(hit.reflectance / 255.0);
+                    let reflected_color = Color::new(
+                        incoming_color.r * reflection_color.r,
+                        incoming_color.g * reflection_color.g,
+                        incoming_color.b * reflection_color.b,
+                    );
 
-                reflected_color
-            } else {
-                Color::new(0., 0., 0.)
+                    reflected_color
+                }
+                None => Color::new(0., 0., 0.),
             }
         } else {
             Self::ray_color(&ray)
