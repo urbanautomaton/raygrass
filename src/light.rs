@@ -2,6 +2,7 @@ use crate::hittable::Hittable;
 use crate::ray::Ray;
 use crate::vector::Vec;
 
+#[allow(dead_code)]
 pub struct Light {
     center: Vec,
     power: f64,
@@ -12,6 +13,7 @@ impl Light {
         Light { center, power }
     }
 
+    #[allow(dead_code)]
     pub fn illuminate(
         &self,
         point: Vec,
