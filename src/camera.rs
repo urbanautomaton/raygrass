@@ -95,9 +95,7 @@ impl Camera {
                 for _ in 0..self.samples {
                     let ray = self.ray_for_pixel(x, y);
 
-                    let color = self
-                        .trace(scene, ray, 50)
-                        .unwrap_or_else(|| Color::new(30.0, 30.0, 30.0));
+                    let color = self.trace(scene, ray, 50);
 
                     color_acc = color_acc.add(color);
                 }
@@ -150,31 +148,27 @@ impl Camera {
         Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0).scale(255.0)
     }
 
-    fn trace(&self, scene: &Scene, ray: Ray, remaining_calls: u32) -> Option<Color> {
+    fn trace(&self, scene: &Scene, ray: Ray, remaining_calls: u32) -> Color {
         if remaining_calls == 0 {
-            return None;
+            return Color::new(0., 0., 0.);
         }
 
         if let Some(hit) = self.ray_hit(&scene.objects, ray) {
             if let Some(reflection_ray) = hit.material.scatter(&ray, &hit.p, &hit.normal) {
-                if let Some(incoming_color) = self.trace(scene, reflection_ray, remaining_calls - 1)
-                {
-                    let reflection_color = hit.color.scale(hit.reflectance / 255.0);
-                    let reflected_color = Color::new(
-                        incoming_color.r * reflection_color.r,
-                        incoming_color.g * reflection_color.g,
-                        incoming_color.b * reflection_color.b,
-                    );
+                let incoming_color = self.trace(scene, reflection_ray, remaining_calls - 1);
+                let reflection_color = hit.color.scale(hit.reflectance / 255.0);
+                let reflected_color = Color::new(
+                    incoming_color.r * reflection_color.r,
+                    incoming_color.g * reflection_color.g,
+                    incoming_color.b * reflection_color.b,
+                );
 
-                    Some(reflected_color)
-                } else {
-                    None
-                }
+                reflected_color
             } else {
-                None
+                Color::new(0., 0., 0.)
             }
         } else {
-            Some(Self::ray_color(&ray))
+            Self::ray_color(&ray)
         }
     }
 }
