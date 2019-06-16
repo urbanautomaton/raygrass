@@ -53,11 +53,18 @@ impl Mul for Vec {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self::Output {
-        let x = self.y * other.z - other.y * self.z;
-        let y = self.x * other.z - other.x * self.z;
-        let z = self.x * other.y - other.x * self.y;
+        let Vec {
+            x: ax,
+            y: ay,
+            z: az,
+        } = self;
+        let Vec {
+            x: bx,
+            y: by,
+            z: bz,
+        } = other;
 
-        Self::new(x, y, z)
+        Self::new(ay * bz - by * az, az * bx - ax * bz, ax * by - ay * bx)
     }
 }
 
