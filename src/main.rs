@@ -1,7 +1,6 @@
 mod camera;
 mod cli;
 mod color;
-mod film;
 mod hittable;
 mod light;
 mod material;
@@ -11,22 +10,21 @@ mod scene;
 mod vector;
 
 use camera::Camera;
-use film::Film;
 use scene::Scene;
 use vector::Vec;
 
+#[allow(dead_code)]
 fn main() {
     let cli_args = cli::CLI::new();
 
-    let eye = Vec::new(0.0, 0.3, 0.3);
-    let film = Film::new(Vec::new(-0.8, 1.0, 1.3), Vec::new(1.2, -0.5, 1.3));
-    let camera = Camera {
-        eye,
-        film,
-        img_x: 1600,
-        img_y: 1200,
-        samples: cli_args.samples(),
-    };
+    let camera = Camera::new(
+        Vec::new(0.0, 0.3, 0.3),
+        Vec::new(1.0, -0.2, 5.0),
+        70.0,
+        1600,
+        1200,
+        cli_args.samples(),
+    );
 
     let scene = Scene::new();
 

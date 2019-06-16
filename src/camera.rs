@@ -9,21 +9,67 @@ use std::sync::{Arc, Mutex};
 use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::color::Color;
-use crate::film::Film;
 use crate::hittable::*;
 use crate::ray::Ray;
 use crate::scene::Scene;
 use crate::vector::Vec;
 
+struct Film {
+    top_left: Vec,
+    u: Vec,
+    v: Vec,
+    width: f64,
+    height: f64,
+}
+
+impl Film {
+    pub fn project(&self, x: f64, y: f64) -> Vec {
+        self.top_left + self.u * x * self.width + self.v * y * self.height
+    }
+}
+
 pub struct Camera {
-    pub eye: Vec,
-    pub film: Film,
-    pub img_x: u32,
-    pub img_y: u32,
-    pub samples: u32,
+    origin: Vec,
+    film: Film,
+    img_x: u32,
+    img_y: u32,
+    samples: u32,
 }
 
 impl Camera {
+    pub fn new(
+        look_from: Vec,
+        look_at: Vec,
+        fov: f64,
+        img_x: u32,
+        img_y: u32,
+        samples: u32,
+    ) -> Self {
+        let theta = fov * std::f64::consts::PI / 180.;
+        let aspect = f64::from(img_x) / f64::from(img_y);
+        let height = (theta / 2.).tan() * 2.;
+        let width = height * aspect;
+        let origin = look_from;
+        let w = (look_at - look_from).normalize();
+        let u = (Vec::new(0., 1., 0.) * w).normalize();
+        let v = (u * w).normalize();
+        let top_left = origin - (u * width / 2.) - (v * height / 2.) + w;
+
+        Self {
+            origin,
+            film: Film {
+                top_left,
+                u,
+                v,
+                width,
+                height,
+            },
+            img_x,
+            img_y,
+            samples,
+        }
+    }
+
     pub fn capture(&self, scene: &Scene, outfile: &str) {
         let buf = Arc::new(Mutex::new(image::ImageBuffer::new(self.img_x, self.img_y)));
         let pb = ProgressBar::new((self.img_x * self.img_y).into());
@@ -73,9 +119,9 @@ impl Camera {
         let x_frac = f64::from(x) / f64::from(self.img_x) + random::<f64>() / f64::from(self.img_x);
         let y_frac = f64::from(y) / f64::from(self.img_y) + random::<f64>() / f64::from(self.img_y);
 
-        let direction = self.film.project(x_frac, y_frac) - self.eye;
+        let direction = self.film.project(x_frac, y_frac) - self.origin;
 
-        Ray::new(self.eye, direction)
+        Ray::new(self.origin, direction)
     }
 
     fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
