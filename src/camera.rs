@@ -33,6 +33,9 @@ pub struct Camera {
     film: Film,
     img_x: u32,
     img_y: u32,
+    aperture: f64,
+    u: Vec,
+    v: Vec,
     samples: u32,
 }
 
@@ -41,19 +44,21 @@ impl Camera {
         look_from: Vec,
         look_at: Vec,
         fov: f64,
+        aperture: f64,
+        focus_dist: f64,
         img_x: u32,
         img_y: u32,
         samples: u32,
     ) -> Self {
         let theta = fov * std::f64::consts::PI / 180.;
         let aspect = f64::from(img_x) / f64::from(img_y);
-        let height = (theta / 2.).tan() * 2.;
+        let height = (theta / 2.).tan() * 2. * focus_dist;
         let width = height * aspect;
         let origin = look_from;
         let w = (look_at - look_from).normalize();
         let u = (Vec::new(0., 1., 0.) * w).normalize();
         let v = (u * w).normalize();
-        let top_left = origin - (u * width / 2.) - (v * height / 2.) + w;
+        let top_left = origin - (u * width / 2.) - (v * height / 2.) + w * focus_dist;
 
         Self {
             origin,
@@ -64,6 +69,9 @@ impl Camera {
                 width,
                 height,
             },
+            aperture,
+            u,
+            v,
             img_x,
             img_y,
             samples,
@@ -113,13 +121,29 @@ impl Camera {
             .expect("Saving image failed");
     }
 
+    fn random_in_unit_disc() -> Vec {
+        let mut vec;
+
+        loop {
+            vec = Vec::new(random::<f64>(), random::<f64>(), 0.) * 2. - Vec::new(1., 1., 0.);
+
+            if vec.dot(vec) < 1.0 {
+                break vec;
+            }
+        }
+    }
+
     fn ray_for_pixel(&self, x: u32, y: u32) -> Ray {
         let x_frac = f64::from(x) / f64::from(self.img_x) + random::<f64>() / f64::from(self.img_x);
         let y_frac = f64::from(y) / f64::from(self.img_y) + random::<f64>() / f64::from(self.img_y);
 
-        let direction = self.film.project(x_frac, y_frac) - self.origin;
+        let random_disc = Self::random_in_unit_disc() * (self.aperture / 2.);
+        let offset = self.u * random_disc.x + self.v * random_disc.y;
+        let ray_origin = self.origin + offset;
 
-        Ray::new(self.origin, direction)
+        let direction = self.film.project(x_frac, y_frac) - ray_origin;
+
+        Ray::new(ray_origin, direction)
     }
 
     fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {

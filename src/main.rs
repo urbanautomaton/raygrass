@@ -17,10 +17,15 @@ use vector::Vec;
 fn main() {
     let cli_args = cli::CLI::new();
 
+    let look_from = Vec::new(0.0, 3.3, 0.3);
+    let look_at = Vec::new(1.0, 0.8, 5.0);
+
     let camera = Camera::new(
-        Vec::new(0.0, 3.3, 0.3),
-        Vec::new(1.0, 0.8, 5.0),
+        look_from,
+        look_at,
         60.0,
+        0.1,
+        (look_at - look_from).length() - 0.5,
         1600,
         1200,
         cli_args.samples(),
