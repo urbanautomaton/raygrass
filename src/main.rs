@@ -18,9 +18,9 @@ fn main() {
     let cli_args = cli::CLI::new();
 
     let camera = Camera::new(
-        Vec::new(0.0, 0.3, 0.3),
-        Vec::new(1.0, -0.2, 5.0),
-        70.0,
+        Vec::new(0.0, 3.3, 0.3),
+        Vec::new(1.0, 0.8, 5.0),
+        60.0,
         1600,
         1200,
         cli_args.samples(),

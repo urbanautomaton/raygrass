@@ -14,7 +14,7 @@ pub struct Scene {
 impl Scene {
     pub fn new() -> Self {
         let glass_sphere = Sphere::new(
-            Vec::new(-1.0, -0.2, 5.0),
+            Vec::new(-1.0, 0.8, 5.0),
             0.8,
             Color::new(255.0, 255.0, 255.0),
             1.0,
@@ -23,7 +23,7 @@ impl Scene {
             },
         );
         let small_glass_sphere = Sphere::new(
-            Vec::new(1.2, 0.0, 3.0),
+            Vec::new(1.2, 1.5, 3.0),
             0.4,
             Color::new(255.0, 255.0, 255.0),
             1.0,
@@ -32,28 +32,28 @@ impl Scene {
             },
         );
         let fuzzy_green_sphere = Sphere::new(
-            Vec::new(1.0, -0.2, 5.0),
+            Vec::new(1.0, 0.8, 5.0),
             0.8,
             Color::new(50.0, 255.0, 100.0),
             1.0,
             &FuzzyReflectiveMaterial { fuzz: 0.1 },
         );
         let blue_sphere = Sphere::new(
-            Vec::new(2.5, -0.2, 5.0),
+            Vec::new(2.5, 0.8, 5.0),
             0.8,
             Color::new(50.0, 100.0, 255.0),
             1.0,
             &LambertianMaterial {},
         );
         let yellow_sphere = Sphere::new(
-            Vec::new(-1.0, 2.0, 4.0),
-            0.2,
+            Vec::new(1.75, 1.5, 6.2),
+            0.5,
             Color::new(220.0, 220.0, 75.0),
             1.0,
             &ReflectiveMaterial {},
         );
         let checkerboard = Plane::new(
-            Vec::new(0.0, -1.0, 0.0),
+            Vec::new(0.0, -0.0, 0.0),
             Vec::new(0.0, 1.0, 0.0),
             Color::new(100.0, 100.0, 100.0),
             1.0,
