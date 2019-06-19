@@ -24,7 +24,7 @@ fn main() {
         look_from,
         look_at,
         60.0,
-        0.1,
+        0.05,
         (look_at - look_from).length() - 0.5,
         1600,
         1200,
