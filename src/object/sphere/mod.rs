@@ -3,22 +3,23 @@ use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec;
+use rand::Rng;
 
-pub struct Sphere<'a> {
+pub struct Sphere<'a, R: Rng> {
     center: Vec,
     radius: f64,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a (Material + Send + Sync),
+    pub material: &'a (Material<R> + Send + Sync),
 }
 
-impl<'a> Sphere<'a> {
+impl<'a, R: Rng> Sphere<'a, R> {
     pub fn new(
         center: Vec,
         radius: f64,
         color: Color,
         reflectance: f64,
-        material: &'a (Material + Send + Sync),
+        material: &'a (Material<R> + Send + Sync),
     ) -> Self {
         Self {
             center,
@@ -38,8 +39,8 @@ impl<'a> Sphere<'a> {
     }
 }
 
-impl<'a> Hittable for Sphere<'a> {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
+impl<'a, R: Rng> Hittable<R> for Sphere<'a, R> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit<R>> {
         let oc = ray.origin - self.center;
         let dot = ray.direction.dot(oc);
 

@@ -3,6 +3,8 @@ extern crate indicatif;
 extern crate rayon;
 
 use rand::prelude::*;
+use rand_xoshiro::rand_core::SeedableRng;
+use rand_xoshiro::Xoshiro256StarStar;
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
 
@@ -78,7 +80,7 @@ impl Camera {
         }
     }
 
-    pub fn capture(&self, scene: &Scene, outfile: &str) {
+    pub fn capture(&self, scene: &Scene<Xoshiro256StarStar>, outfile: &str) {
         let buf = Arc::new(Mutex::new(image::ImageBuffer::new(self.img_x, self.img_y)));
         let pb = ProgressBar::new((self.img_x * self.img_y).into());
         pb.set_style(
@@ -96,14 +98,16 @@ impl Camera {
                 let x = px % self.img_x;
                 let y = px / self.img_x;
 
+                let mut rng = Xoshiro256StarStar::seed_from_u64(px as u64);
+
                 pb.inc(1);
 
                 let mut color_acc = Color::new(0., 0., 0.);
 
                 for _ in 0..self.samples {
-                    let ray = self.ray_for_pixel(x, y);
+                    let ray = self.ray_for_pixel(x, y, &mut rng);
 
-                    let color = self.trace(scene, ray, 50);
+                    let color = self.trace(scene, ray, 50, &mut rng);
 
                     color_acc = color_acc.add(color);
                 }
@@ -121,11 +125,11 @@ impl Camera {
             .expect("Saving image failed");
     }
 
-    fn random_in_unit_disc() -> Vec {
+    fn random_in_unit_disc(rng: &mut Xoshiro256StarStar) -> Vec {
         let mut vec;
 
         loop {
-            let (x, y) = random::<(f64, f64)>();
+            let (x, y): (f64, f64) = rng.gen();
 
             vec = Vec::new(x, y, 0.) * 2. - Vec::new(1., 1., 0.);
 
@@ -135,13 +139,13 @@ impl Camera {
         }
     }
 
-    fn ray_for_pixel(&self, x: u32, y: u32) -> Ray {
-        let (x_samp, y_samp) = random::<(f64, f64)>();
+    fn ray_for_pixel(&self, x: u32, y: u32, rng: &mut Xoshiro256StarStar) -> Ray {
+        let (x_samp, y_samp): (f64, f64) = rng.gen();
 
         let x_frac = f64::from(x) / f64::from(self.img_x) + x_samp / f64::from(self.img_x);
         let y_frac = f64::from(y) / f64::from(self.img_y) + y_samp / f64::from(self.img_y);
 
-        let random_disc = Self::random_in_unit_disc() * (self.aperture / 2.);
+        let random_disc = Self::random_in_unit_disc(rng) * (self.aperture / 2.);
         let offset = self.u * random_disc.x + self.v * random_disc.y;
         let ray_origin = self.origin + offset;
 
@@ -150,8 +154,12 @@ impl Camera {
         Ray::new(ray_origin, direction)
     }
 
-    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
-        let mut result: Option<Hit> = None;
+    fn ray_hit<'a>(
+        &'a self,
+        objects: &'a [Box<Hittable<Xoshiro256StarStar> + Sync + Send>],
+        ray: Ray,
+    ) -> Option<Hit<Xoshiro256StarStar>> {
+        let mut result: Option<Hit<Xoshiro256StarStar>> = None;
 
         for o in objects {
             if let Some(hit) = o.hit(&ray, 1e-10, std::f64::INFINITY) {
@@ -176,15 +184,22 @@ impl Camera {
         Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0).scale(255.0)
     }
 
-    fn trace(&self, scene: &Scene, ray: Ray, remaining_calls: u32) -> Color {
+    fn trace(
+        &self,
+        scene: &Scene<Xoshiro256StarStar>,
+        ray: Ray,
+        remaining_calls: u32,
+        rng: &mut Xoshiro256StarStar,
+    ) -> Color {
         if remaining_calls == 0 {
             return Color::new(0., 0., 0.);
         }
 
         if let Some(hit) = self.ray_hit(&scene.objects, ray) {
-            match hit.material.scatter(&ray, &hit.p, &hit.normal) {
+            match hit.material.scatter(&ray, &hit.p, &hit.normal, rng) {
                 Some(reflection_ray) => {
-                    let incoming_color = self.trace(scene, reflection_ray, remaining_calls - 1);
+                    let incoming_color =
+                        self.trace(scene, reflection_ray, remaining_calls - 1, rng);
                     let reflection_color = hit.color.scale(hit.reflectance / 255.0);
                     let reflected_color = Color::new(
                         incoming_color.r * reflection_color.r,

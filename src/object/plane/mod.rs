@@ -3,22 +3,23 @@ use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec;
+use rand::Rng;
 
-pub struct Plane<'a> {
+pub struct Plane<'a, R: Rng> {
     point: Vec,
     normal: Vec,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a (Material + Send + Sync),
+    pub material: &'a (Material<R> + Send + Sync),
 }
 
-impl<'a> Plane<'a> {
+impl<'a, R: Rng> Plane<'a, R> {
     pub fn new(
         point: Vec,
         normal: Vec,
         color: Color,
         reflectance: f64,
-        material: &'a (Material + Send + Sync),
+        material: &'a (Material<R> + Send + Sync),
     ) -> Self {
         Self {
             point,
@@ -38,8 +39,8 @@ impl<'a> Plane<'a> {
     }
 }
 
-impl<'a> Hittable for Plane<'a> {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
+impl<'a, R: Rng> Hittable<R> for Plane<'a, R> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit<R>> {
         let ndotl = self.normal.dot(ray.direction);
 
         if ndotl.abs() < 1e-10 {

@@ -1,6 +1,7 @@
 use crate::hittable::Hittable;
 use crate::ray::Ray;
 use crate::vector::Vec;
+use rand::prelude::*;
 
 #[allow(dead_code)]
 pub struct Light {
@@ -14,11 +15,11 @@ impl Light {
     }
 
     #[allow(dead_code)]
-    pub fn illuminate(
+    pub fn illuminate<R: Rng>(
         &self,
         point: Vec,
         normal: Vec,
-        objects: &[Box<Hittable + Sync + Send>],
+        objects: &[Box<Hittable<R> + Sync + Send>],
     ) -> f64 {
         let point_to_light = self.center - point;
         let length = point_to_light.length();

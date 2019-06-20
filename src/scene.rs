@@ -5,13 +5,14 @@ use crate::material::*;
 use crate::object::plane::Plane;
 use crate::object::sphere::Sphere;
 use crate::vector::Vec;
+use rand::Rng;
 
-pub struct Scene {
-    pub objects: std::vec::Vec<Box<Hittable + Send + Sync>>,
+pub struct Scene<R: Rng + 'static> {
+    pub objects: std::vec::Vec<Box<Hittable<R> + Send + Sync>>,
     pub lights: std::vec::Vec<Light>,
 }
 
-impl Scene {
+impl<R: Rng> Scene<R> {
     pub fn new() -> Self {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
@@ -60,7 +61,7 @@ impl Scene {
             &LambertianMaterial {},
         );
 
-        let objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
+        let objects: std::vec::Vec<Box<Hittable<R> + Send + Sync>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
