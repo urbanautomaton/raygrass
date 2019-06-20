@@ -125,7 +125,9 @@ impl Camera {
         let mut vec;
 
         loop {
-            vec = Vec::new(random::<f64>(), random::<f64>(), 0.) * 2. - Vec::new(1., 1., 0.);
+            let (x, y) = random::<(f64, f64)>();
+
+            vec = Vec::new(x, y, 0.) * 2. - Vec::new(1., 1., 0.);
 
             if vec.dot(vec) < 1.0 {
                 break vec;
@@ -134,8 +136,10 @@ impl Camera {
     }
 
     fn ray_for_pixel(&self, x: u32, y: u32) -> Ray {
-        let x_frac = f64::from(x) / f64::from(self.img_x) + random::<f64>() / f64::from(self.img_x);
-        let y_frac = f64::from(y) / f64::from(self.img_y) + random::<f64>() / f64::from(self.img_y);
+        let (x_samp, y_samp) = random::<(f64, f64)>();
+
+        let x_frac = f64::from(x) / f64::from(self.img_x) + x_samp / f64::from(self.img_x);
+        let y_frac = f64::from(y) / f64::from(self.img_y) + y_samp / f64::from(self.img_y);
 
         let random_disc = Self::random_in_unit_disc() * (self.aperture / 2.);
         let offset = self.u * random_disc.x + self.v * random_disc.y;

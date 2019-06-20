@@ -25,6 +25,14 @@ impl Vec {
     }
 }
 
+impl From<[f64; 3]> for Vec {
+    fn from(coords: [f64; 3]) -> Self {
+        let [x, y, z] = coords;
+
+        Self { x, y, z }
+    }
+}
+
 impl Add for Vec {
     type Output = Self;
 

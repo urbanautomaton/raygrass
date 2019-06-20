@@ -26,7 +26,7 @@ impl Material for FuzzyReflectiveMaterial {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
-        let fuzz_vector = Vec::new(random::<f64>(), random::<f64>(), random::<f64>()) * self.fuzz;
+        let fuzz_vector = Vec::from(random::<[f64; 3]>()) * self.fuzz;
         let scattered = reflection_direction + fuzz_vector;
 
         if scattered.dot(*normal) > 0.0 {
@@ -44,7 +44,7 @@ impl LambertianMaterial {
         let mut vec;
 
         loop {
-            vec = Vec::new(random::<f64>(), random::<f64>(), random::<f64>());
+            vec = Vec::from(random::<[f64; 3]>());
 
             if vec.length() <= 1.0 {
                 break vec;
