@@ -80,7 +80,7 @@ impl Camera {
         }
     }
 
-    pub fn capture(&self, scene: &Scene<Xoshiro256StarStar>, outfile: &str) {
+    pub fn capture(&self, scene: &Scene, outfile: &str) {
         let buf = Arc::new(Mutex::new(image::ImageBuffer::new(self.img_x, self.img_y)));
         let pb = ProgressBar::new((self.img_x * self.img_y).into());
         pb.set_style(
@@ -156,10 +156,10 @@ impl Camera {
 
     fn ray_hit<'a>(
         &'a self,
-        objects: &'a [Box<Hittable<Xoshiro256StarStar> + Sync + Send>],
+        objects: &'a [Box<Hittable + Sync + Send>],
         ray: Ray,
-    ) -> Option<Hit<Xoshiro256StarStar>> {
-        let mut result: Option<Hit<Xoshiro256StarStar>> = None;
+    ) -> Option<Hit> {
+        let mut result: Option<Hit> = None;
 
         for o in objects {
             if let Some(hit) = o.hit(&ray, 1e-10, std::f64::INFINITY) {
@@ -186,7 +186,7 @@ impl Camera {
 
     fn trace(
         &self,
-        scene: &Scene<Xoshiro256StarStar>,
+        scene: &Scene,
         ray: Ray,
         remaining_calls: u32,
         rng: &mut Xoshiro256StarStar,

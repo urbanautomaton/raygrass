@@ -1,16 +1,17 @@
 use rand::Rng;
+use rand_xoshiro::Xoshiro256StarStar;
 
 use crate::ray::Ray;
 use crate::vector::Vec;
 
-pub trait Material<R: Rng> {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut R) -> Option<Ray>;
+pub trait Material {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray>;
 }
 
 pub struct ReflectiveMaterial {}
 
-impl<R: Rng> Material<R> for ReflectiveMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, _rng: &mut R) -> Option<Ray> {
+impl Material for ReflectiveMaterial {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, _rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
@@ -22,8 +23,8 @@ pub struct FuzzyReflectiveMaterial {
     pub fuzz: f64,
 }
 
-impl<R: Rng> Material<R> for FuzzyReflectiveMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut R) -> Option<Ray> {
+impl Material for FuzzyReflectiveMaterial {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
@@ -42,7 +43,7 @@ impl<R: Rng> Material<R> for FuzzyReflectiveMaterial {
 pub struct LambertianMaterial {}
 
 impl LambertianMaterial {
-    fn random_in_unit_sphere<R: Rng>(rng: &mut R) -> Vec {
+    fn random_in_unit_sphere(rng: &mut Xoshiro256StarStar) -> Vec {
         let mut vec;
 
         loop {
@@ -57,8 +58,8 @@ impl LambertianMaterial {
     }
 }
 
-impl<R: Rng> Material<R> for LambertianMaterial {
-    fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut R) -> Option<Ray> {
+impl Material for LambertianMaterial {
+    fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let direction = Self::random_in_unit_sphere(rng) + *normal;
 
         Some(Ray::new(*intersection, direction))
@@ -98,8 +99,8 @@ impl DielectricMaterial {
     }
 }
 
-impl<R: Rng> Material<R> for DielectricMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut R) -> Option<Ray> {
+impl Material for DielectricMaterial {
+    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let outward_normal;
         let ni_over_nt;
         let cosine;
