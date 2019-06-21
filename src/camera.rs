@@ -92,6 +92,9 @@ impl Camera {
         );
         pb.set_draw_delta((self.img_x * self.img_y / (100 * self.samples)).into());
 
+        let pixel_width = 1. / self.img_x as f64;
+        let pixel_height = 1. / self.img_y as f64;
+
         (0..(self.img_x * self.img_y))
             .into_par_iter()
             .for_each(|px| {
@@ -104,8 +107,14 @@ impl Camera {
 
                 let mut color_acc = Color::new(0., 0., 0.);
 
+                let x_min = x as f64 / self.img_x as f64;
+                let y_min = y as f64 / self.img_y as f64;
+
                 for _ in 0..self.samples {
-                    let ray = self.ray_for_pixel(x, y, &mut rng);
+                    let x_max = x_min + pixel_width;
+                    let y_max = y_min + pixel_height;
+
+                    let ray = self.ray_for_pixel(&mut rng, (x_min, x_max), (y_min, y_max));
 
                     let color = self.trace(scene, ray, 50, &mut rng);
 
@@ -139,26 +148,25 @@ impl Camera {
         }
     }
 
-    fn ray_for_pixel(&self, x: u32, y: u32, rng: &mut Xoshiro256StarStar) -> Ray {
-        let (x_samp, y_samp): (f64, f64) = rng.gen();
-
-        let x_frac = f64::from(x) / f64::from(self.img_x) + x_samp / f64::from(self.img_x);
-        let y_frac = f64::from(y) / f64::from(self.img_y) + y_samp / f64::from(self.img_y);
+    fn ray_for_pixel(
+        &self,
+        rng: &mut Xoshiro256StarStar,
+        x_range: (f64, f64),
+        y_range: (f64, f64),
+    ) -> Ray {
+        let x_pos = rng.gen_range(x_range.0, x_range.1);
+        let y_pos = rng.gen_range(y_range.0, y_range.1);
 
         let random_disc = Self::random_in_unit_disc(rng) * (self.aperture / 2.);
         let offset = self.u * random_disc.x + self.v * random_disc.y;
         let ray_origin = self.origin + offset;
 
-        let direction = self.film.project(x_frac, y_frac) - ray_origin;
+        let direction = self.film.project(x_pos, y_pos) - ray_origin;
 
         Ray::new(ray_origin, direction)
     }
 
-    fn ray_hit<'a>(
-        &'a self,
-        objects: &'a [Box<Hittable + Sync + Send>],
-        ray: Ray,
-    ) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
         let mut result: Option<Hit> = None;
 
         for o in objects {
