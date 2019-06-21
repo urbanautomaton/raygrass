@@ -29,6 +29,14 @@ impl<'a> CLI<'a> {
                     .help("The number of samples per pixel (default: 100)")
                     .takes_value(true),
             )
+            .arg(
+                clap::Arg::with_name("resolution")
+                    .short("r")
+                    .long("resolution")
+                    .value_name("RESOLUTION")
+                    .help("The size of the image (WxH, default: 1600x1200)")
+                    .takes_value(true),
+            )
             .get_matches();
 
         Self { matches }
@@ -41,6 +49,27 @@ impl<'a> CLI<'a> {
             println!("Invalid samples value '{}'", val);
             100
         })
+    }
+
+    pub fn resolution(&self) -> (u32, u32) {
+        let val = self.matches.value_of("resolution").unwrap_or("1600x1200");
+        let vals: Vec<&str> = val.split('x').collect();
+
+        if vals.len() != 2 {
+            println!("Invalid resolution '{}'", val);
+            return (1600, 1200);
+        }
+
+        let x: u32 = vals[0].parse().unwrap_or_else(|_| {
+            println!("Invalid resolution '{}'", val);
+            1600
+        });
+        let y: u32 = vals[1].parse().unwrap_or_else(|_| {
+            println!("Invalid x value '{}'", val);
+            1200
+        });
+
+        (x, y)
     }
 
     pub fn outfile(&self) -> &str {

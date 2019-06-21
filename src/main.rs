@@ -20,14 +20,16 @@ fn main() {
     let look_from = Vec::new(0.0, 3.3, 0.3);
     let look_at = Vec::new(1.0, 0.8, 5.0);
 
+    let (img_x, img_y) = cli_args.resolution();
+
     let camera = Camera::new(
         look_from,
         look_at,
         60.0,
         0.05,
         (look_at - look_from).length() - 0.5,
-        1600,
-        1200,
+        img_x,
+        img_y,
         cli_args.samples(),
     );
 
