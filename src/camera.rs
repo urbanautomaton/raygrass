@@ -101,7 +101,7 @@ impl Camera {
                 let x = px % self.img_x;
                 let y = px / self.img_x;
 
-                let mut rng = Xoshiro256StarStar::seed_from_u64(px as u64);
+                let mut rng = Xoshiro256StarStar::from_entropy();
 
                 pb.inc(1);
 
