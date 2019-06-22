@@ -5,13 +5,25 @@ use crate::ray::Ray;
 use crate::vector::Vec;
 
 pub trait Material {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray>;
+    fn scatter(
+        &self,
+        ray_in: &Ray,
+        intersection: &Vec,
+        normal: &Vec,
+        rng: &mut Xoshiro256StarStar,
+    ) -> Option<Ray>;
 }
 
 pub struct ReflectiveMaterial {}
 
 impl Material for ReflectiveMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, _rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+    fn scatter(
+        &self,
+        ray_in: &Ray,
+        intersection: &Vec,
+        normal: &Vec,
+        _rng: &mut Xoshiro256StarStar,
+    ) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
@@ -24,7 +36,13 @@ pub struct FuzzyReflectiveMaterial {
 }
 
 impl Material for FuzzyReflectiveMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+    fn scatter(
+        &self,
+        ray_in: &Ray,
+        intersection: &Vec,
+        normal: &Vec,
+        rng: &mut Xoshiro256StarStar,
+    ) -> Option<Ray> {
         let dot = ray_in.direction.dot(*normal);
         let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
 
@@ -59,7 +77,13 @@ impl LambertianMaterial {
 }
 
 impl Material for LambertianMaterial {
-    fn scatter(&self, _ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+    fn scatter(
+        &self,
+        _ray_in: &Ray,
+        intersection: &Vec,
+        normal: &Vec,
+        rng: &mut Xoshiro256StarStar,
+    ) -> Option<Ray> {
         let direction = Self::random_in_unit_sphere(rng) + *normal;
 
         Some(Ray::new(*intersection, direction))
@@ -100,7 +124,13 @@ impl DielectricMaterial {
 }
 
 impl Material for DielectricMaterial {
-    fn scatter(&self, ray_in: &Ray, intersection: &Vec, normal: &Vec, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+    fn scatter(
+        &self,
+        ray_in: &Ray,
+        intersection: &Vec,
+        normal: &Vec,
+        rng: &mut Xoshiro256StarStar,
+    ) -> Option<Ray> {
         let outward_normal;
         let ni_over_nt;
         let cosine;
