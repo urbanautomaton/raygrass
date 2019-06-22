@@ -37,6 +37,14 @@ impl<'a> CLI<'a> {
                     .help("The size of the image (WxH, default: 1600x1200)")
                     .takes_value(true),
             )
+            .arg(
+                clap::Arg::with_name("time")
+                    .short("t")
+                    .long("time")
+                    .value_name("TIME")
+                    .help("The simulation time (seconds, default: 0.0)")
+                    .takes_value(true),
+            )
             .get_matches();
 
         Self { matches }
@@ -70,6 +78,15 @@ impl<'a> CLI<'a> {
         });
 
         (x, y)
+    }
+
+    pub fn time(&self) -> f64 {
+        let val = self.matches.value_of("time").unwrap_or("0.0");
+
+        val.parse().unwrap_or_else(|_| {
+            println!("Invalid time value '{}'", val);
+            0.0
+        })
     }
 
     pub fn outfile(&self) -> &str {

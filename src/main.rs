@@ -17,17 +17,25 @@ use vector::Vec;
 fn main() {
     let cli_args = cli::CLI::new();
 
-    let look_from = Vec::new(0.0, 3.3, 0.3);
+    let look_from = Vec::new(0.0, 1.8, 0.3);
     let look_at = Vec::new(1.0, 0.8, 5.0);
 
     let (img_x, img_y) = cli_args.resolution();
 
+    let time = cli_args.time();
+    let theta = 2. * std::f64::consts::PI * time / 10.;
+    let cos = theta.cos();
+    let sin = theta.sin();
+
+    let c = look_from - look_at;
+    let rotated_look_from = Vec::new(c.x * cos - c.z * sin, c.y, c.x * sin + c.z * cos) + look_at;
+
     let camera = Camera::new(
-        look_from,
+        rotated_look_from,
         look_at,
         60.0,
         0.05,
-        (look_at - look_from).length() - 0.5,
+        (look_at - look_from).length(),
         img_x,
         img_y,
         cli_args.samples(),
