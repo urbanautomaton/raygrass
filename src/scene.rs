@@ -5,6 +5,7 @@ use crate::material::*;
 use crate::object::plane::Plane;
 use crate::object::sphere::Sphere;
 use crate::vector::Vec;
+use rand::prelude::*;
 
 pub struct Scene {
     pub objects: std::vec::Vec<Box<Hittable + Send + Sync>>,
@@ -60,7 +61,7 @@ impl Scene {
             &LambertianMaterial {},
         );
 
-        let objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
+        let mut objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
@@ -68,6 +69,31 @@ impl Scene {
             Box::new(yellow_sphere),
             Box::new(checkerboard),
         ];
+
+        let mut rng = thread_rng();
+
+        for _ in 1..100 {
+            let color_coords: [f64; 3] = rng.gen();
+            let material: &(Material + Send + Sync);
+
+            match rng.gen_range(0u32, 3) {
+                0 => material = &LambertianMaterial {},
+                1 => material = &FuzzyReflectiveMaterial { fuzz: 0.1 },
+                2 => {
+                    material = &DielectricMaterial {
+                        refractive_index: 1.3,
+                    }
+                }
+                _ => material = &ReflectiveMaterial {},
+            }
+            objects.push(Box::new(Sphere::new(
+                Vec::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.)),
+                0.1,
+                Color::from(color_coords).scale(255.0),
+                1.0,
+                material,
+            )))
+        }
 
         let lights = vec![
             Light::new(Vec::new(5.0, 5.0, 5.0), 500.0),

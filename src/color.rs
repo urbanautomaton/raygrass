@@ -19,6 +19,12 @@ impl Color {
     }
 }
 
+impl From<[f64; 3]> for Color {
+    fn from(coords: [f64; 3]) -> Self {
+        Color::new(coords[0], coords[1], coords[2])
+    }
+}
+
 impl From<Color> for [u8; 3] {
     fn from(color: Color) -> Self {
         let clamp = std::u8::MAX as f64;

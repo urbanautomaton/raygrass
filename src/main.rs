@@ -17,7 +17,7 @@ use vector::Vec;
 fn main() {
     let cli_args = cli::CLI::new();
 
-    let look_from = Vec::new(0.0, 1.8, 0.3);
+    let look_from = Vec::new(0.0, 2.8, 0.3);
     let look_at = Vec::new(1.0, 0.8, 5.0);
 
     let (img_x, img_y) = cli_args.resolution();
