@@ -1,3 +1,7 @@
+use rand::prelude::*;
+use rand_xoshiro::rand_core::SeedableRng;
+use rand_xoshiro::Xoshiro256StarStar;
+
 use crate::color::*;
 use crate::hittable::Hittable;
 use crate::light::Light;
@@ -5,7 +9,6 @@ use crate::material::*;
 use crate::object::plane::Plane;
 use crate::object::sphere::Sphere;
 use crate::vector::Vec;
-use rand::prelude::*;
 
 pub struct Scene {
     pub objects: std::vec::Vec<Box<Hittable + Send + Sync>>,
@@ -70,7 +73,7 @@ impl Scene {
             Box::new(checkerboard),
         ];
 
-        let mut rng = thread_rng();
+        let mut rng = Xoshiro256StarStar::seed_from_u64(0);
 
         for _ in 1..100 {
             let color_coords: [f64; 3] = rng.gen();
