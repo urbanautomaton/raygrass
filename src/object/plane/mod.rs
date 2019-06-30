@@ -63,8 +63,4 @@ impl<'a> Hittable for Plane<'a> {
             }
         }
     }
-
-    fn bounding_box(&self) -> Option<BoundingBox> {
-        None
-    }
 }

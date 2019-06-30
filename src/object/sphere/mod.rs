@@ -71,14 +71,16 @@ impl<'a> Hittable for Sphere<'a> {
 
         return None;
     }
+}
 
-    fn bounding_box(&self) -> Option<BoundingBox> {
+impl<'a> BoundedHittable for Sphere<'a> {
+    fn bounding_box(&self) -> BoundingBox {
         let offset = Vec::new(self.radius, self.radius, self.radius);
 
-        Some(BoundingBox {
+        BoundingBox {
             min: self.center - offset,
             max: self.center + offset,
-        })
+        }
     }
 }
 
