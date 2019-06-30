@@ -71,6 +71,15 @@ impl<'a> Hittable for Sphere<'a> {
 
         return None;
     }
+
+    fn bounding_box(&self) -> Option<BoundingBox> {
+        let offset = Vec::new(self.radius, self.radius, self.radius);
+
+        Some(BoundingBox {
+            min: self.center - offset,
+            max: self.center + offset,
+        })
+    }
 }
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Index, Mul, Sub};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec {
@@ -30,6 +30,19 @@ impl From<[f64; 3]> for Vec {
         let [x, y, z] = coords;
 
         Self { x, y, z }
+    }
+}
+
+impl Index<u64> for Vec {
+    type Output = f64;
+
+    fn index(&self, index: u64) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!(format!("Index {} out of range for Vec", index)),
+        }
     }
 }
 
