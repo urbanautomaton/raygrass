@@ -11,10 +11,10 @@ pub struct Hit<'a> {
     pub normal: Vec,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a (Material + Send + Sync),
+    pub material: &'a Material,
 }
 
-pub trait Hittable {
+pub trait Hittable: Send + Sync {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit>;
 
     fn bounding_box(&self) -> Option<BoundingBox>;

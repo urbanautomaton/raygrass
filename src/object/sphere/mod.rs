@@ -9,7 +9,7 @@ pub struct Sphere<'a> {
     radius: f64,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a (Material + Send + Sync),
+    pub material: &'a Material,
 }
 
 impl<'a> Sphere<'a> {
@@ -18,7 +18,7 @@ impl<'a> Sphere<'a> {
         radius: f64,
         color: Color,
         reflectance: f64,
-        material: &'a (Material + Send + Sync),
+        material: &'a Material,
     ) -> Self {
         Self {
             center,

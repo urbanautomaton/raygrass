@@ -11,7 +11,7 @@ use crate::object::sphere::Sphere;
 use crate::vector::Vec;
 
 pub struct Scene {
-    pub objects: std::vec::Vec<Box<Hittable + Send + Sync>>,
+    pub objects: std::vec::Vec<Box<Hittable>>,
     pub lights: std::vec::Vec<Light>,
 }
 
@@ -64,7 +64,7 @@ impl Scene {
             &LambertianMaterial {},
         );
 
-        let mut objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
+        let mut objects: std::vec::Vec<Box<Hittable>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
@@ -77,7 +77,7 @@ impl Scene {
 
         for _ in 1..100 {
             let color_coords: [f64; 3] = rng.gen();
-            let material: &(Material + Send + Sync);
+            let material: &Material;
 
             match rng.gen_range(0u32, 3) {
                 0 => material = &LambertianMaterial {},

@@ -4,7 +4,7 @@ use rand_xoshiro::Xoshiro256StarStar;
 use crate::ray::Ray;
 use crate::vector::Vec;
 
-pub trait Material {
+pub trait Material: Send + Sync {
     fn scatter(
         &self,
         ray_in: &Ray,
