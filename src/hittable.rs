@@ -29,6 +29,21 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
+    pub fn combine(boxes: &[Self]) -> Self {
+        boxes[1..].iter().fold(boxes[0], |acc, b| Self {
+            min: Vec {
+                x: acc.min.x.min(b.min.x),
+                y: acc.min.y.min(b.min.y),
+                z: acc.min.z.min(b.min.z),
+            },
+            max: Vec {
+                x: acc.max.x.max(b.max.x),
+                y: acc.max.y.max(b.max.y),
+                z: acc.max.z.max(b.max.z),
+            },
+        })
+    }
+
     pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> bool {
         let mut tmin = t_min;
         let mut tmax = t_max;

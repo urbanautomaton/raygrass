@@ -2,6 +2,7 @@ use rand::prelude::*;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
 
+use crate::bvh::*;
 use crate::color::*;
 use crate::hittable::Hittable;
 use crate::light::Light;
@@ -64,9 +65,10 @@ impl Scene {
             &LambertianMaterial {},
         );
 
+        let bvh = BVH::new(Box::new(glass_sphere), Box::new(small_glass_sphere));
+
         let mut objects: std::vec::Vec<Box<Hittable>> = vec![
-            Box::new(glass_sphere),
-            Box::new(small_glass_sphere),
+            Box::new(bvh),
             Box::new(fuzzy_green_sphere),
             Box::new(blue_sphere),
             Box::new(yellow_sphere),
