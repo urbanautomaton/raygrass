@@ -18,9 +18,12 @@ pub trait Hittable: Send + Sync {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit>;
 }
 
-pub trait BoundedHittable: Hittable {
+pub trait Bounded {
     fn bounding_box(&self) -> BoundingBox;
 }
+
+pub trait BoundedHittable: Bounded + Hittable {}
+impl<T: Bounded + Hittable> BoundedHittable for T {}
 
 #[derive(Debug, Copy, Clone)]
 pub struct BoundingBox {

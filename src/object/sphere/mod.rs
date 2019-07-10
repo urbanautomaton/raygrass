@@ -73,7 +73,7 @@ impl<'a> Hittable for Sphere<'a> {
     }
 }
 
-impl<'a> BoundedHittable for Sphere<'a> {
+impl<'a> Bounded for Sphere<'a> {
     fn bounding_box(&self) -> BoundingBox {
         let offset = Vec::new(self.radius, self.radius, self.radius);
 

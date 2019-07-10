@@ -1,3 +1,9 @@
+use std::cmp::Ordering;
+
+use rand::Rng;
+use rand_xoshiro::rand_core::SeedableRng;
+use rand_xoshiro::Xoshiro256StarStar;
+
 use crate::hittable::*;
 use crate::ray::*;
 
@@ -8,15 +14,48 @@ pub struct BVH {
 }
 
 impl BVH {
-    pub fn new(left: Box<BoundedHittable>, right: Box<BoundedHittable>) -> Self {
-        let lbox = left.bounding_box();
-        let rbox = right.bounding_box();
+    fn from_hittables(
+        mut hittables: Vec<Box<BoundedHittable>>,
+        mut rng: Xoshiro256StarStar,
+    ) -> Self {
+        let axis = rng.gen_range(0, 4);
+
+        hittables.sort_by(|a, b| {
+            a.bounding_box().min[axis]
+                .partial_cmp(&b.bounding_box().min[axis])
+                .unwrap_or(Ordering::Equal)
+        });
+
+        let left: Box<BoundedHittable>;
+        let right: Box<BoundedHittable>;
+
+        match hittables.len() {
+            1 => panic!("You can't make a BVH of one hittable, buddy."),
+            2 => {
+                left = hittables.pop().unwrap();
+                right = hittables.pop().unwrap();
+            }
+            3 => {
+                left = hittables.pop().unwrap();
+                right = Box::new(Self::from_hittables(hittables, rng));
+            }
+            _ => {
+                left = Box::new(Self::new(hittables.split_off(hittables.len() / 2)));
+                right = Box::new(Self::from_hittables(hittables, rng));
+            }
+        }
 
         Self {
+            bounding_box: BoundingBox::combine(&[left.bounding_box(), right.bounding_box()]),
             left: left,
             right: right,
-            bounding_box: BoundingBox::combine(&[lbox, rbox]),
         }
+    }
+
+    pub fn new(hittables: Vec<Box<BoundedHittable>>) -> Self {
+        let rng = Xoshiro256StarStar::seed_from_u64(0);
+
+        Self::from_hittables(hittables, rng)
     }
 }
 
@@ -42,7 +81,7 @@ impl Hittable for BVH {
     }
 }
 
-impl BoundedHittable for BVH {
+impl Bounded for BVH {
     fn bounding_box(&self) -> BoundingBox {
         self.bounding_box
     }
