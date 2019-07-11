@@ -166,7 +166,7 @@ impl Camera {
         Ray::new(ray_origin, direction)
     }
 
-    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + Sync + Send>], ray: Ray) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable>], ray: Ray) -> Option<Hit> {
         let mut result: Option<Hit> = None;
 
         for o in objects {

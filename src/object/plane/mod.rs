@@ -9,7 +9,7 @@ pub struct Plane<'a> {
     normal: Vec,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a (Material + Send + Sync),
+    pub material: &'a Material,
 }
 
 impl<'a> Plane<'a> {
@@ -18,7 +18,7 @@ impl<'a> Plane<'a> {
         normal: Vec,
         color: Color,
         reflectance: f64,
-        material: &'a (Material + Send + Sync),
+        material: &'a Material,
     ) -> Self {
         Self {
             point,

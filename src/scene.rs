@@ -2,16 +2,17 @@ use rand::prelude::*;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
 
+use crate::bvh::*;
 use crate::color::*;
-use crate::hittable::Hittable;
+use crate::hittable::*;
 use crate::light::Light;
 use crate::material::*;
-use crate::object::plane::Plane;
-use crate::object::sphere::Sphere;
+use crate::object::plane::*;
+use crate::object::sphere::*;
 use crate::vector::Vec;
 
 pub struct Scene {
-    pub objects: std::vec::Vec<Box<Hittable + Send + Sync>>,
+    pub objects: std::vec::Vec<Box<Hittable>>,
     pub lights: std::vec::Vec<Light>,
 }
 
@@ -64,20 +65,19 @@ impl Scene {
             &LambertianMaterial {},
         );
 
-        let mut objects: std::vec::Vec<Box<Hittable + Send + Sync>> = vec![
+        let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
             Box::new(blue_sphere),
             Box::new(yellow_sphere),
-            Box::new(checkerboard),
         ];
 
         let mut rng = Xoshiro256StarStar::seed_from_u64(0);
 
         for _ in 1..100 {
             let color_coords: [f64; 3] = rng.gen();
-            let material: &(Material + Send + Sync);
+            let material: &Material;
 
             match rng.gen_range(0u32, 3) {
                 0 => material = &LambertianMaterial {},
@@ -89,7 +89,8 @@ impl Scene {
                 }
                 _ => material = &ReflectiveMaterial {},
             }
-            objects.push(Box::new(Sphere::new(
+
+            boundeds.push(Box::new(Sphere::new(
                 Vec::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.)),
                 0.1,
                 Color::from(color_coords).scale(255.0),
@@ -97,6 +98,9 @@ impl Scene {
                 material,
             )))
         }
+
+        let objects: std::vec::Vec<Box<Hittable>> =
+            vec![Box::new(BVH::new(boundeds)), Box::new(checkerboard)];
 
         let lights = vec![
             Light::new(Vec::new(5.0, 5.0, 5.0), 500.0),

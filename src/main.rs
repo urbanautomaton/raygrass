@@ -1,3 +1,4 @@
+mod bvh;
 mod camera;
 mod cli;
 mod color;

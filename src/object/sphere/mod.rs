@@ -9,7 +9,7 @@ pub struct Sphere<'a> {
     radius: f64,
     pub color: Color,
     pub reflectance: f64,
-    pub material: &'a (Material + Send + Sync),
+    pub material: &'a Material,
 }
 
 impl<'a> Sphere<'a> {
@@ -18,7 +18,7 @@ impl<'a> Sphere<'a> {
         radius: f64,
         color: Color,
         reflectance: f64,
-        material: &'a (Material + Send + Sync),
+        material: &'a Material,
     ) -> Self {
         Self {
             center,
@@ -70,6 +70,17 @@ impl<'a> Hittable for Sphere<'a> {
         }
 
         return None;
+    }
+}
+
+impl<'a> Bounded for Sphere<'a> {
+    fn bounding_box(&self) -> BoundingBox {
+        let offset = Vec::new(self.radius, self.radius, self.radius);
+
+        BoundingBox {
+            min: self.center - offset,
+            max: self.center + offset,
+        }
     }
 }
 
