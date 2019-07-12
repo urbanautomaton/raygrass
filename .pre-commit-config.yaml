@@ -1,0 +1,7 @@
+- repo: local
+  hooks:
+  - id: cargo-test
+    name: cargo test
+    entry: cargo test --release
+    language: system
+    files: src/*.rs$|Cargo.toml
