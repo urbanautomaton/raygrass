@@ -8,6 +8,7 @@ mod material;
 mod object;
 mod ray;
 mod scene;
+mod texture;
 mod vector;
 
 use camera::Camera;

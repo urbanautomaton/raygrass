@@ -2,28 +2,29 @@ use crate::color::Color;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::texture::Texture;
 use crate::vector::Vec;
 
-pub struct Sphere<'a> {
+pub struct Sphere<'a, T: Texture> {
     center: Vec,
     radius: f64,
-    pub color: Color,
+    texture: T,
     pub reflectance: f64,
     pub material: &'a Material,
 }
 
-impl<'a> Sphere<'a> {
+impl<'a, T: Texture> Sphere<'a, T> {
     pub fn new(
         center: Vec,
         radius: f64,
-        color: Color,
+        texture: T,
         reflectance: f64,
         material: &'a Material,
     ) -> Self {
         Self {
             center,
             radius,
-            color,
+            texture,
             reflectance,
             material,
         }
@@ -34,11 +35,11 @@ impl<'a> Sphere<'a> {
     }
 
     fn color_at(&self, _point: Vec) -> Color {
-        self.color
+        self.texture.color(0., 0.)
     }
 }
 
-impl<'a> Hittable for Sphere<'a> {
+impl<'a, T: Texture> Hittable for Sphere<'a, T> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center;
         let dot = ray.direction.dot(oc);
@@ -73,7 +74,7 @@ impl<'a> Hittable for Sphere<'a> {
     }
 }
 
-impl<'a> Bounded for Sphere<'a> {
+impl<'a, T: Texture> Bounded for Sphere<'a, T> {
     fn bounding_box(&self) -> BoundingBox {
         let offset = Vec::new(self.radius, self.radius, self.radius);
 

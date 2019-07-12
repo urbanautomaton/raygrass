@@ -2,28 +2,29 @@ use crate::color::Color;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::texture::Texture;
 use crate::vector::Vec;
 
-pub struct Plane<'a> {
+pub struct Plane<'a, T: Texture> {
     point: Vec,
     normal: Vec,
-    pub color: Color,
+    texture: T,
     pub reflectance: f64,
     pub material: &'a Material,
 }
 
-impl<'a> Plane<'a> {
+impl<'a, T: Texture> Plane<'a, T> {
     pub fn new(
         point: Vec,
         normal: Vec,
-        color: Color,
+        texture: T,
         reflectance: f64,
         material: &'a Material,
     ) -> Self {
         Self {
             point,
             normal: normal.normalize(),
-            color,
+            texture,
             reflectance,
             material,
         }
@@ -33,12 +34,12 @@ impl<'a> Plane<'a> {
         if (point.x.round() + point.z.round()).abs() % 2.0 < 1e-10 {
             Color::new(10.0, 10.0, 10.0)
         } else {
-            self.color
+            self.texture.color(0., 0.)
         }
     }
 }
 
-impl<'a> Hittable for Plane<'a> {
+impl<'a, T: Texture> Hittable for Plane<'a, T> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let ndotl = self.normal.dot(ray.direction);
 
