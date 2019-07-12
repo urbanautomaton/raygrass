@@ -18,7 +18,7 @@ impl BVH {
         mut hittables: Vec<Box<BoundedHittable>>,
         mut rng: Xoshiro256StarStar,
     ) -> Self {
-        let axis = rng.gen_range(0, 4);
+        let axis = rng.gen_range(0, 3);
 
         hittables.sort_by(|a, b| {
             a.bounding_box().min[axis]
