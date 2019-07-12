@@ -4,4 +4,5 @@
     name: cargo test
     entry: cargo test --release
     language: system
-    files: src/*.rs$|Cargo.toml
+    files: src/.*\.rs$|Cargo.toml
+    pass_filenames: false
