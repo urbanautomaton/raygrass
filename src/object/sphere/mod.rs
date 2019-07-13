@@ -70,7 +70,7 @@ impl<'a, T: Texture> Hittable for Sphere<'a, T> {
             }
         }
 
-        return None;
+        None
     }
 }
 

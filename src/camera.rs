@@ -38,7 +38,6 @@ pub struct Camera {
     aperture: f64,
     u: Vec,
     v: Vec,
-    samples: u32,
 }
 
 impl Camera {
@@ -50,7 +49,6 @@ impl Camera {
         focus_dist: f64,
         img_x: u32,
         img_y: u32,
-        samples: u32,
     ) -> Self {
         let theta = fov * std::f64::consts::PI / 180.;
         let aspect = f64::from(img_x) / f64::from(img_y);
@@ -76,11 +74,10 @@ impl Camera {
             v,
             img_x,
             img_y,
-            samples,
         }
     }
 
-    pub fn capture(&self, scene: &Scene, outfile: &str) {
+    pub fn capture(&self, scene: &Scene, samples: u32, outfile: &str) {
         let buf = Arc::new(Mutex::new(image::ImageBuffer::new(self.img_x, self.img_y)));
         let pb = ProgressBar::new((self.img_x * self.img_y).into());
         pb.set_style(
@@ -90,10 +87,11 @@ impl Camera {
                 )
                 .progress_chars("#>-"),
         );
-        pb.set_draw_delta((self.img_x * self.img_y / (100 * self.samples)).into());
+        pb.set_draw_delta((self.img_x * self.img_y / (100 * samples)).into());
 
-        let pixel_width = 1. / self.img_x as f64;
-        let pixel_height = 1. / self.img_y as f64;
+        let pixel_width = 1. / f64::from(self.img_x);
+        let pixel_height = 1. / f64::from(self.img_y);
+        let color_scale = 1. / f64::from(samples);
 
         (0..(self.img_x * self.img_y))
             .into_par_iter()
@@ -107,10 +105,10 @@ impl Camera {
 
                 let mut color_acc = Color::new(0., 0., 0.);
 
-                let x_min = x as f64 / self.img_x as f64;
-                let y_min = y as f64 / self.img_y as f64;
+                let x_min = f64::from(x) * pixel_width;
+                let y_min = f64::from(y) * pixel_height;
 
-                for _ in 0..self.samples {
+                for _ in 0..samples {
                     let x_max = x_min + pixel_width;
                     let y_max = y_min + pixel_height;
 
@@ -121,7 +119,7 @@ impl Camera {
                     color_acc = color_acc.add(color);
                 }
 
-                color_acc = color_acc.scale(1. / f64::from(self.samples));
+                color_acc = color_acc.scale(color_scale);
 
                 buf.lock()
                     .unwrap()
@@ -209,13 +207,12 @@ impl Camera {
                     let incoming_color =
                         self.trace(scene, reflection_ray, remaining_calls - 1, rng);
                     let reflection_color = hit.color.scale(hit.reflectance / 255.0);
-                    let reflected_color = Color::new(
+
+                    Color::new(
                         incoming_color.r * reflection_color.r,
                         incoming_color.g * reflection_color.g,
                         incoming_color.b * reflection_color.b,
-                    );
-
-                    reflected_color
+                    )
                 }
                 None => Color::new(0., 0., 0.),
             }

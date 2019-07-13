@@ -27,7 +27,7 @@ impl From<[f64; 3]> for Color {
 
 impl From<Color> for [u8; 3] {
     fn from(color: Color) -> Self {
-        let clamp = std::u8::MAX as f64;
+        let clamp = f64::from(std::u8::MAX);
 
         [
             color.r.min(clamp) as u8,

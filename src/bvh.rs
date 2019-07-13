@@ -47,8 +47,8 @@ impl BVH {
 
         Self {
             bounding_box: BoundingBox::combine(&[left.bounding_box(), right.bounding_box()]),
-            left: left,
-            right: right,
+            left,
+            right,
         }
     }
 

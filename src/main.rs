@@ -40,10 +40,9 @@ fn main() {
         (look_at - look_from).length(),
         img_x,
         img_y,
-        cli_args.samples(),
     );
 
     let scene = Scene::new();
 
-    camera.capture(&scene, cli_args.outfile())
+    camera.capture(&scene, cli_args.samples(), cli_args.outfile())
 }

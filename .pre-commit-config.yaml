@@ -6,3 +6,9 @@
     language: system
     files: src/.*\.rs$|Cargo.toml
     pass_filenames: false
+  - id: cargo-clippy
+    name: cargo clippy
+    entry: cargo clippy --release
+    language: system
+    files: src/.*\.rs$|Cargo.toml
+    pass_filenames: false
