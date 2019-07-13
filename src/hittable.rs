@@ -10,7 +10,6 @@ pub struct Hit<'a> {
     pub p: Vec,
     pub normal: Vec,
     pub color: Color,
-    pub reflectance: f64,
     pub material: &'a Material,
 }
 

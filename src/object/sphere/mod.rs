@@ -9,23 +9,15 @@ pub struct Sphere<'a, T: Texture> {
     center: Vec,
     radius: f64,
     texture: T,
-    pub reflectance: f64,
     pub material: &'a Material,
 }
 
 impl<'a, T: Texture> Sphere<'a, T> {
-    pub fn new(
-        center: Vec,
-        radius: f64,
-        texture: T,
-        reflectance: f64,
-        material: &'a Material,
-    ) -> Self {
+    pub fn new(center: Vec, radius: f64, texture: T, material: &'a Material) -> Self {
         Self {
             center,
             radius,
             texture,
-            reflectance,
             material,
         }
     }
@@ -64,7 +56,6 @@ impl<'a, T: Texture> Hittable for Sphere<'a, T> {
                     p,
                     normal,
                     color,
-                    reflectance: self.reflectance,
                     material: self.material,
                 });
             }

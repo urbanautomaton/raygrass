@@ -206,7 +206,7 @@ impl Camera {
                 Some(reflection_ray) => {
                     let incoming_color =
                         self.trace(scene, reflection_ray, remaining_calls - 1, rng);
-                    let reflection_color = hit.color.scale(hit.reflectance / 255.0);
+                    let reflection_color = hit.color.scale(1. / 255.0);
 
                     Color::new(
                         incoming_color.r * reflection_color.r,

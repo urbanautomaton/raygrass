@@ -9,23 +9,15 @@ pub struct Plane<'a, T: Texture> {
     point: Vec,
     normal: Vec,
     texture: T,
-    pub reflectance: f64,
     pub material: &'a Material,
 }
 
 impl<'a, T: Texture> Plane<'a, T> {
-    pub fn new(
-        point: Vec,
-        normal: Vec,
-        texture: T,
-        reflectance: f64,
-        material: &'a Material,
-    ) -> Self {
+    pub fn new(point: Vec, normal: Vec, texture: T, material: &'a Material) -> Self {
         Self {
             point,
             normal: normal.normalize(),
             texture,
-            reflectance,
             material,
         }
     }
@@ -58,7 +50,6 @@ impl<'a, T: Texture> Hittable for Plane<'a, T> {
                     p,
                     normal: self.normal,
                     color,
-                    reflectance: self.reflectance,
                     material: self.material,
                 })
             }

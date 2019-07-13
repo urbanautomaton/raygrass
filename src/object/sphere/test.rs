@@ -14,7 +14,6 @@ mod hit {
             ConstantTexture {
                 color: Color::new(0.0, 0.0, 0.0),
             },
-            0.0,
             &LambertianMaterial {},
         )
     }

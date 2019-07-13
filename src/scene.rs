@@ -25,7 +25,6 @@ impl Scene {
             ConstantTexture {
                 color: Color::new(255.0, 255.0, 255.0),
             },
-            1.0,
             &DielectricMaterial {
                 refractive_index: 1.3,
             },
@@ -36,7 +35,6 @@ impl Scene {
             ConstantTexture {
                 color: Color::new(255.0, 255.0, 255.0),
             },
-            1.0,
             &DielectricMaterial {
                 refractive_index: 1.3,
             },
@@ -47,7 +45,6 @@ impl Scene {
             ConstantTexture {
                 color: Color::new(50.0, 255.0, 100.0),
             },
-            1.0,
             &FuzzyReflectiveMaterial { fuzz: 0.1 },
         );
         let blue_sphere = Sphere::new(
@@ -56,7 +53,6 @@ impl Scene {
             ConstantTexture {
                 color: Color::new(50.0, 100.0, 255.0),
             },
-            1.0,
             &LambertianMaterial {},
         );
         let yellow_sphere = Sphere::new(
@@ -65,7 +61,6 @@ impl Scene {
             ConstantTexture {
                 color: Color::new(220.0, 220.0, 75.0),
             },
-            1.0,
             &ReflectiveMaterial {},
         );
         let checkerboard = Plane::new(
@@ -74,7 +69,6 @@ impl Scene {
             ConstantTexture {
                 color: Color::new(100.0, 100.0, 100.0),
             },
-            1.0,
             &LambertianMaterial {},
         );
 
@@ -109,7 +103,6 @@ impl Scene {
                 ConstantTexture {
                     color: Color::from(color_coords).scale(255.0),
                 },
-                1.0,
                 material,
             )))
         }
