@@ -22,54 +22,59 @@ impl Scene {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
             0.8,
-            ConstantTexture {
-                color: Color::new(255.0, 255.0, 255.0),
-            },
-            &DielectricMaterial {
+            DielectricMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(255.0, 255.0, 255.0),
+                },
                 refractive_index: 1.3,
             },
         );
         let small_glass_sphere = Sphere::new(
             Vec::new(1.2, 1.5, 3.0),
             0.4,
-            ConstantTexture {
-                color: Color::new(255.0, 255.0, 255.0),
-            },
-            &DielectricMaterial {
+            DielectricMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(255.0, 255.0, 255.0),
+                },
                 refractive_index: 1.3,
             },
         );
         let fuzzy_green_sphere = Sphere::new(
             Vec::new(1.0, 0.8, 5.0),
             0.8,
-            ConstantTexture {
-                color: Color::new(50.0, 255.0, 100.0),
+            FuzzyReflectiveMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(50.0, 255.0, 100.0),
+                },
+                fuzz: 0.1,
             },
-            &FuzzyReflectiveMaterial { fuzz: 0.1 },
         );
         let blue_sphere = Sphere::new(
             Vec::new(2.5, 0.8, 5.0),
             0.8,
-            ConstantTexture {
-                color: Color::new(50.0, 100.0, 255.0),
+            LambertianMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(50.0, 100.0, 255.0),
+                },
             },
-            &LambertianMaterial {},
         );
         let yellow_sphere = Sphere::new(
             Vec::new(1.75, 1.5, 6.2),
             0.5,
-            ConstantTexture {
-                color: Color::new(220.0, 220.0, 75.0),
+            ReflectiveMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(220.0, 220.0, 75.0),
+                },
             },
-            &ReflectiveMaterial {},
         );
         let checkerboard = Plane::new(
             Vec::new(0.0, -0.0, 0.0),
             Vec::new(0.0, 1.0, 0.0),
-            ConstantTexture {
-                color: Color::new(100.0, 100.0, 100.0),
+            LambertianMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(100.0, 100.0, 100.0),
+                },
             },
-            &LambertianMaterial {},
         );
 
         let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable>> = vec![
@@ -84,27 +89,37 @@ impl Scene {
 
         for _ in 1..100 {
             let color_coords: [f64; 3] = rng.gen();
-            let material: &Material;
+            let texture = ConstantTexture {
+                color: Color::from(color_coords).scale(255.0),
+            };
+            let position = Vec::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.));
+            let radius = 0.1;
 
             match rng.gen_range(0u32, 3) {
-                0 => material = &LambertianMaterial {},
-                1 => material = &FuzzyReflectiveMaterial { fuzz: 0.1 },
-                2 => {
-                    material = &DielectricMaterial {
+                0 => boundeds.push(Box::new(Sphere::new(
+                    position,
+                    radius,
+                    LambertianMaterial { texture },
+                ))),
+                1 => boundeds.push(Box::new(Sphere::new(
+                    position,
+                    radius,
+                    FuzzyReflectiveMaterial { texture, fuzz: 0.1 },
+                ))),
+                2 => boundeds.push(Box::new(Sphere::new(
+                    position,
+                    radius,
+                    DielectricMaterial {
+                        texture,
                         refractive_index: 1.3,
-                    }
-                }
-                _ => material = &ReflectiveMaterial {},
+                    },
+                ))),
+                _ => boundeds.push(Box::new(Sphere::new(
+                    position,
+                    radius,
+                    ReflectiveMaterial { texture },
+                ))),
             }
-
-            boundeds.push(Box::new(Sphere::new(
-                Vec::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.)),
-                0.1,
-                ConstantTexture {
-                    color: Color::from(color_coords).scale(255.0),
-                },
-                material,
-            )))
         }
 
         let objects: std::vec::Vec<Box<Hittable>> =

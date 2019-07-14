@@ -1,6 +1,5 @@
 use std::mem;
 
-use crate::color::Color;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector::Vec;
@@ -8,8 +7,9 @@ use crate::vector::Vec;
 pub struct Hit<'a> {
     pub t: f64,
     pub p: Vec,
+    pub u: f64,
+    pub v: f64,
     pub normal: Vec,
-    pub color: Color,
     pub material: &'a Material,
 }
 

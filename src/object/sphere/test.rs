@@ -1,8 +1,10 @@
 use super::*;
+
+use crate::color::Color;
 use crate::material::LambertianMaterial;
 use crate::texture::ConstantTexture;
 
-type Subject = Sphere<'static, ConstantTexture>;
+type Subject = Sphere<LambertianMaterial<ConstantTexture>>;
 
 mod hit {
     use super::*;
@@ -11,10 +13,11 @@ mod hit {
         Subject::new(
             Vec::new(0.0, 0.0, 0.0),
             1.0,
-            ConstantTexture {
-                color: Color::new(0.0, 0.0, 0.0),
+            LambertianMaterial {
+                texture: ConstantTexture {
+                    color: Color::new(0.0, 0.0, 0.0),
+                },
             },
-            &LambertianMaterial {},
         )
     }
 

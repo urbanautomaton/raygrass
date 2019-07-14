@@ -1,31 +1,49 @@
 use rand::Rng;
 use rand_xoshiro::Xoshiro256StarStar;
 
+use crate::color::Color;
 use crate::hittable::Hit;
 use crate::ray::Ray;
+use crate::texture::Texture;
 use crate::vector::Vec;
 
 pub trait Material: Send + Sync {
-    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray>;
+    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<(Ray, Color)> {
+        if let Some(scattered) = self.scatter_ray(ray, hit, rng) {
+            Some((scattered, self.attenuation(hit)))
+        } else {
+            None
+        }
+    }
+
+    fn scatter_ray(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray>;
+    fn attenuation(&self, hit: &Hit) -> Color;
 }
 
-pub struct ReflectiveMaterial {}
+pub struct ReflectiveMaterial<T: Texture> {
+    pub texture: T,
+}
 
-impl Material for ReflectiveMaterial {
-    fn scatter(&self, ray: &Ray, hit: &Hit, _rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+impl<T: Texture> Material for ReflectiveMaterial<T> {
+    fn scatter_ray(&self, ray: &Ray, hit: &Hit, _rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let dot = ray.direction.dot(hit.normal);
         let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
 
         Some(Ray::new(hit.p, reflection_direction))
     }
+
+    fn attenuation(&self, hit: &Hit) -> Color {
+        self.texture.color(hit.u, hit.v)
+    }
 }
 
-pub struct FuzzyReflectiveMaterial {
+pub struct FuzzyReflectiveMaterial<T: Texture> {
+    pub texture: T,
     pub fuzz: f64,
 }
 
-impl Material for FuzzyReflectiveMaterial {
-    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+impl<T: Texture> Material for FuzzyReflectiveMaterial<T> {
+    fn scatter_ray(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let dot = ray.direction.dot(hit.normal);
         let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
 
@@ -39,11 +57,17 @@ impl Material for FuzzyReflectiveMaterial {
             None
         }
     }
+
+    fn attenuation(&self, hit: &Hit) -> Color {
+        self.texture.color(hit.u, hit.v)
+    }
 }
 
-pub struct LambertianMaterial {}
+pub struct LambertianMaterial<T: Texture> {
+    pub texture: T,
+}
 
-impl LambertianMaterial {
+impl<T: Texture> LambertianMaterial<T> {
     fn random_in_unit_sphere(rng: &mut Xoshiro256StarStar) -> Vec {
         let mut vec;
 
@@ -59,19 +83,24 @@ impl LambertianMaterial {
     }
 }
 
-impl Material for LambertianMaterial {
-    fn scatter(&self, _ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+impl<T: Texture> Material for LambertianMaterial<T> {
+    fn scatter_ray(&self, _ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let direction = Self::random_in_unit_sphere(rng) + hit.normal;
 
         Some(Ray::new(hit.p, direction))
     }
+
+    fn attenuation(&self, hit: &Hit) -> Color {
+        self.texture.color(hit.u, hit.v)
+    }
 }
 
-pub struct DielectricMaterial {
+pub struct DielectricMaterial<T: Texture> {
+    pub texture: T,
     pub refractive_index: f64,
 }
 
-impl DielectricMaterial {
+impl<T: Texture> DielectricMaterial<T> {
     fn refract(direction: &Vec, normal: &Vec, ni_over_nt: f64) -> Option<Vec> {
         let uv = direction.normalize();
         let dt = uv.dot(*normal);
@@ -100,8 +129,8 @@ impl DielectricMaterial {
     }
 }
 
-impl Material for DielectricMaterial {
-    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+impl<T: Texture> Material for DielectricMaterial<T> {
+    fn scatter_ray(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let outward_normal;
         let ni_over_nt;
         let cosine;
@@ -130,5 +159,9 @@ impl Material for DielectricMaterial {
         } else {
             Self::reflect(ray, hit)
         }
+    }
+
+    fn attenuation(&self, hit: &Hit) -> Color {
+        self.texture.color(hit.u, hit.v)
     }
 }

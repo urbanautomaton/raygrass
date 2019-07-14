@@ -1,37 +1,25 @@
-use crate::color::Color;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::texture::Texture;
 use crate::vector::Vec;
 
-pub struct Plane<'a, T: Texture> {
+pub struct Plane<M: Material> {
     point: Vec,
     normal: Vec,
-    texture: T,
-    pub material: &'a Material,
+    material: M,
 }
 
-impl<'a, T: Texture> Plane<'a, T> {
-    pub fn new(point: Vec, normal: Vec, texture: T, material: &'a Material) -> Self {
+impl<M: Material> Plane<M> {
+    pub fn new(point: Vec, normal: Vec, material: M) -> Self {
         Self {
             point,
             normal: normal.normalize(),
-            texture,
             material,
-        }
-    }
-
-    fn color_at(&self, point: Vec) -> Color {
-        if (point.x.round() + point.z.round()).abs() % 2.0 < 1e-10 {
-            Color::new(10.0, 10.0, 10.0)
-        } else {
-            self.texture.color(0., 0.)
         }
     }
 }
 
-impl<'a, T: Texture> Hittable for Plane<'a, T> {
+impl<M: Material> Hittable for Plane<M> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let ndotl = self.normal.dot(ray.direction);
 
@@ -40,7 +28,6 @@ impl<'a, T: Texture> Hittable for Plane<'a, T> {
         } else {
             let t = self.normal.dot(self.point - ray.origin) / ndotl;
             let p = ray.at(t);
-            let color = self.color_at(p);
 
             if t < t_min || t > t_max {
                 None
@@ -48,9 +35,10 @@ impl<'a, T: Texture> Hittable for Plane<'a, T> {
                 Some(Hit {
                     t,
                     p,
+                    u: 0.,
+                    v: 0.,
                     normal: self.normal,
-                    color,
-                    material: self.material,
+                    material: &self.material,
                 })
             }
         }

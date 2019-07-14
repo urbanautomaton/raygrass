@@ -203,10 +203,10 @@ impl Camera {
 
         if let Some(hit) = self.ray_hit(&scene.objects, ray) {
             match hit.material.scatter(&ray, &hit, rng) {
-                Some(reflection_ray) => {
+                Some((reflection_ray, attenuation)) => {
                     let incoming_color =
                         self.trace(scene, reflection_ray, remaining_calls - 1, rng);
-                    let reflection_color = hit.color.scale(1. / 255.0);
+                    let reflection_color = attenuation.scale(1. / 255.0);
 
                     Color::new(
                         incoming_color.r * reflection_color.r,

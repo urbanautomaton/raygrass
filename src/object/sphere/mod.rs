@@ -1,23 +1,19 @@
-use crate::color::Color;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::texture::Texture;
 use crate::vector::Vec;
 
-pub struct Sphere<'a, T: Texture> {
+pub struct Sphere<M: Material> {
     center: Vec,
     radius: f64,
-    texture: T,
-    pub material: &'a Material,
+    material: M,
 }
 
-impl<'a, T: Texture> Sphere<'a, T> {
-    pub fn new(center: Vec, radius: f64, texture: T, material: &'a Material) -> Self {
+impl<M: Material> Sphere<M> {
+    pub fn new(center: Vec, radius: f64, material: M) -> Self {
         Self {
             center,
             radius,
-            texture,
             material,
         }
     }
@@ -25,13 +21,9 @@ impl<'a, T: Texture> Sphere<'a, T> {
     fn surface_normal(&self, point: Vec) -> Vec {
         (point - self.center).normalize()
     }
-
-    fn color_at(&self, _point: Vec) -> Color {
-        self.texture.color(0., 0.)
-    }
 }
 
-impl<'a, T: Texture> Hittable for Sphere<'a, T> {
+impl<M: Material> Hittable for Sphere<M> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center;
         let dot = ray.direction.dot(oc);
@@ -49,14 +41,14 @@ impl<'a, T: Texture> Hittable for Sphere<'a, T> {
             if (t_min..t_max).contains(t) {
                 let p = ray.at(*t);
                 let normal = self.surface_normal(p);
-                let color = self.color_at(p);
 
                 return Some(Hit {
                     t: *t,
                     p,
+                    u: 0.,
+                    v: 0.,
                     normal,
-                    color,
-                    material: self.material,
+                    material: &self.material,
                 });
             }
         }
@@ -65,7 +57,7 @@ impl<'a, T: Texture> Hittable for Sphere<'a, T> {
     }
 }
 
-impl<'a, T: Texture> Bounded for Sphere<'a, T> {
+impl<M: Material> Bounded for Sphere<M> {
     fn bounding_box(&self) -> BoundingBox {
         let offset = Vec::new(self.radius, self.radius, self.radius);
 
