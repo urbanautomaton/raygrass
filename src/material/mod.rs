@@ -1,33 +1,22 @@
 use rand::Rng;
 use rand_xoshiro::Xoshiro256StarStar;
 
+use crate::hittable::Hit;
 use crate::ray::Ray;
 use crate::vector::Vec;
 
 pub trait Material: Send + Sync {
-    fn scatter(
-        &self,
-        ray_in: &Ray,
-        intersection: &Vec,
-        normal: &Vec,
-        rng: &mut Xoshiro256StarStar,
-    ) -> Option<Ray>;
+    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray>;
 }
 
 pub struct ReflectiveMaterial {}
 
 impl Material for ReflectiveMaterial {
-    fn scatter(
-        &self,
-        ray_in: &Ray,
-        intersection: &Vec,
-        normal: &Vec,
-        _rng: &mut Xoshiro256StarStar,
-    ) -> Option<Ray> {
-        let dot = ray_in.direction.dot(*normal);
-        let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
+    fn scatter(&self, ray: &Ray, hit: &Hit, _rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+        let dot = ray.direction.dot(hit.normal);
+        let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
 
-        Some(Ray::new(*intersection, reflection_direction))
+        Some(Ray::new(hit.p, reflection_direction))
     }
 }
 
@@ -36,22 +25,16 @@ pub struct FuzzyReflectiveMaterial {
 }
 
 impl Material for FuzzyReflectiveMaterial {
-    fn scatter(
-        &self,
-        ray_in: &Ray,
-        intersection: &Vec,
-        normal: &Vec,
-        rng: &mut Xoshiro256StarStar,
-    ) -> Option<Ray> {
-        let dot = ray_in.direction.dot(*normal);
-        let reflection_direction = ray_in.direction - *normal * (2.0 * dot);
+    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+        let dot = ray.direction.dot(hit.normal);
+        let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
 
         let coords: [f64; 3] = rng.gen();
         let fuzz_vector = Vec::from(coords) * self.fuzz;
         let scattered = reflection_direction + fuzz_vector;
 
-        if scattered.dot(*normal) > 0.0 {
-            Some(Ray::new(*intersection, scattered.normalize()))
+        if scattered.dot(hit.normal) > 0.0 {
+            Some(Ray::new(hit.p, scattered.normalize()))
         } else {
             None
         }
@@ -77,16 +60,10 @@ impl LambertianMaterial {
 }
 
 impl Material for LambertianMaterial {
-    fn scatter(
-        &self,
-        _ray_in: &Ray,
-        intersection: &Vec,
-        normal: &Vec,
-        rng: &mut Xoshiro256StarStar,
-    ) -> Option<Ray> {
-        let direction = Self::random_in_unit_sphere(rng) + *normal;
+    fn scatter(&self, _ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
+        let direction = Self::random_in_unit_sphere(rng) + hit.normal;
 
-        Some(Ray::new(*intersection, direction))
+        Some(Ray::new(hit.p, direction))
     }
 }
 
@@ -109,11 +86,11 @@ impl DielectricMaterial {
         }
     }
 
-    fn reflect(ray_in: &Ray, intersection: &Vec, normal: &Vec) -> Option<Ray> {
-        let dot = ray_in.direction.dot(*normal);
-        let direction = ray_in.direction - *normal * (2.0 * dot);
+    fn reflect(ray: &Ray, hit: &Hit) -> Option<Ray> {
+        let dot = ray.direction.dot(hit.normal);
+        let direction = ray.direction - hit.normal * (2.0 * dot);
 
-        Some(Ray::new(*intersection, direction))
+        Some(Ray::new(hit.p, direction))
     }
 
     fn schlick(&self, cosine: f64) -> f64 {
@@ -124,40 +101,34 @@ impl DielectricMaterial {
 }
 
 impl Material for DielectricMaterial {
-    fn scatter(
-        &self,
-        ray_in: &Ray,
-        intersection: &Vec,
-        normal: &Vec,
-        rng: &mut Xoshiro256StarStar,
-    ) -> Option<Ray> {
+    fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
         let outward_normal;
         let ni_over_nt;
         let cosine;
-        let rdotn = ray_in.direction.dot(*normal);
+        let rdotn = ray.direction.dot(hit.normal);
 
         if rdotn > 0.0 {
-            outward_normal = *normal * -1.0;
+            outward_normal = hit.normal * -1.0;
             ni_over_nt = self.refractive_index;
             cosine = self.refractive_index * rdotn;
         } else {
-            outward_normal = *normal;
+            outward_normal = hit.normal;
             ni_over_nt = 1.0 / self.refractive_index;
             cosine = -rdotn;
         }
 
         let reflect_prob = self.schlick(cosine);
 
-        if let Some(refracted) = Self::refract(&ray_in.direction, &outward_normal, ni_over_nt) {
+        if let Some(refracted) = Self::refract(&ray.direction, &outward_normal, ni_over_nt) {
             let val: f64 = rng.gen();
 
             if val < reflect_prob {
-                Self::reflect(ray_in, intersection, normal)
+                Self::reflect(ray, hit)
             } else {
-                Some(Ray::new(*intersection, refracted))
+                Some(Ray::new(hit.p, refracted))
             }
         } else {
-            Self::reflect(ray_in, intersection, normal)
+            Self::reflect(ray, hit)
         }
     }
 }

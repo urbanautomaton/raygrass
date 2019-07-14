@@ -202,7 +202,7 @@ impl Camera {
         }
 
         if let Some(hit) = self.ray_hit(&scene.objects, ray) {
-            match hit.material.scatter(&ray, &hit.p, &hit.normal, rng) {
+            match hit.material.scatter(&ray, &hit, rng) {
                 Some(reflection_ray) => {
                     let incoming_color =
                         self.trace(scene, reflection_ray, remaining_calls - 1, rng);
