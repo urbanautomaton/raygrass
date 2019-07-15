@@ -60,7 +60,7 @@ impl Scene {
                     even: ConstantTexture {
                         color: Color::new(0.2, 0.4, 1.),
                     },
-                    pitch: 20.,
+                    width: 0.15,
                 },
             },
         );
@@ -84,7 +84,7 @@ impl Scene {
                     even: ConstantTexture {
                         color: Color::new(0.8, 0.8, 0.8),
                     },
-                    pitch: 5.,
+                    width: 1.,
                 },
             },
         );
