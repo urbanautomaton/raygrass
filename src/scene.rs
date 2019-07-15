@@ -53,8 +53,14 @@ impl Scene {
             Vec::new(2.5, 0.8, 5.0),
             0.8,
             LambertianMaterial {
-                texture: ConstantTexture {
-                    color: Color::new(0.2, 0.4, 1.),
+                texture: CheckerboardTexture {
+                    odd: ConstantTexture {
+                        color: Color::new(0.9, 0.9, 0.9),
+                    },
+                    even: ConstantTexture {
+                        color: Color::new(0.2, 0.4, 1.),
+                    },
+                    pitch: 20.,
                 },
             },
         );
