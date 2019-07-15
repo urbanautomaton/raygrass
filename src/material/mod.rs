@@ -33,7 +33,7 @@ impl<T: Texture> Material for ReflectiveMaterial<T> {
     }
 
     fn attenuation(&self, hit: &Hit) -> Color {
-        self.texture.color(hit.u, hit.v)
+        self.texture.color(hit.u, hit.v, &hit.p)
     }
 }
 
@@ -59,7 +59,7 @@ impl<T: Texture> Material for FuzzyReflectiveMaterial<T> {
     }
 
     fn attenuation(&self, hit: &Hit) -> Color {
-        self.texture.color(hit.u, hit.v)
+        self.texture.color(hit.u, hit.v, &hit.p)
     }
 }
 
@@ -91,7 +91,7 @@ impl<T: Texture> Material for LambertianMaterial<T> {
     }
 
     fn attenuation(&self, hit: &Hit) -> Color {
-        self.texture.color(hit.u, hit.v)
+        self.texture.color(hit.u, hit.v, &hit.p)
     }
 }
 
@@ -162,6 +162,6 @@ impl<T: Texture> Material for DielectricMaterial<T> {
     }
 
     fn attenuation(&self, hit: &Hit) -> Color {
-        self.texture.color(hit.u, hit.v)
+        self.texture.color(hit.u, hit.v, &hit.p)
     }
 }

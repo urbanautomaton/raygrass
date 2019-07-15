@@ -68,11 +68,17 @@ impl Scene {
             },
         );
         let checkerboard = Plane::new(
-            Vec::new(0.0, -0.0, 0.0),
+            Vec::new(0.0, 0.0, 0.0),
             Vec::new(0.0, 1.0, 0.0),
             LambertianMaterial {
-                texture: ConstantTexture {
-                    color: Color::new(100.0, 100.0, 100.0),
+                texture: CheckerboardTexture {
+                    odd: ConstantTexture {
+                        color: Color::new(10., 10., 50.),
+                    },
+                    even: ConstantTexture {
+                        color: Color::new(200., 200., 200.),
+                    },
+                    pitch: 5.,
                 },
             },
         );
