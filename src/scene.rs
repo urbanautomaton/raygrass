@@ -24,7 +24,7 @@ impl Scene {
             0.8,
             DielectricMaterial {
                 texture: ConstantTexture {
-                    color: Color::new(255.0, 255.0, 255.0),
+                    color: Color::new(1., 1., 1.),
                 },
                 refractive_index: 1.3,
             },
@@ -34,7 +34,7 @@ impl Scene {
             0.4,
             DielectricMaterial {
                 texture: ConstantTexture {
-                    color: Color::new(255.0, 255.0, 255.0),
+                    color: Color::new(1., 1., 1.),
                 },
                 refractive_index: 1.3,
             },
@@ -44,7 +44,7 @@ impl Scene {
             0.8,
             FuzzyReflectiveMaterial {
                 texture: ConstantTexture {
-                    color: Color::new(50.0, 255.0, 100.0),
+                    color: Color::new(0.2, 1., 0.4),
                 },
                 fuzz: 0.1,
             },
@@ -54,7 +54,7 @@ impl Scene {
             0.8,
             LambertianMaterial {
                 texture: ConstantTexture {
-                    color: Color::new(50.0, 100.0, 255.0),
+                    color: Color::new(0.2, 0.4, 1.),
                 },
             },
         );
@@ -63,7 +63,7 @@ impl Scene {
             0.5,
             ReflectiveMaterial {
                 texture: ConstantTexture {
-                    color: Color::new(220.0, 220.0, 75.0),
+                    color: Color::new(0.85, 0.85, 0.3),
                 },
             },
         );
@@ -73,10 +73,10 @@ impl Scene {
             LambertianMaterial {
                 texture: CheckerboardTexture {
                     odd: ConstantTexture {
-                        color: Color::new(10., 10., 50.),
+                        color: Color::new(0.05, 0.05, 0.2),
                     },
                     even: ConstantTexture {
-                        color: Color::new(200., 200., 200.),
+                        color: Color::new(0.8, 0.8, 0.8),
                     },
                     pitch: 5.,
                 },
@@ -96,7 +96,7 @@ impl Scene {
         for _ in 1..100 {
             let color_coords: [f64; 3] = rng.gen();
             let texture = ConstantTexture {
-                color: Color::from(color_coords).scale(255.0),
+                color: Color::from(color_coords),
             };
             let position = Vec::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.));
             let radius = 0.1;

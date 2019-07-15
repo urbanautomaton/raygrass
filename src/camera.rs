@@ -187,7 +187,7 @@ impl Camera {
     fn ray_color(ray: &Ray) -> Color {
         let t = 0.5 * (ray.direction.y + 1.0);
 
-        Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0).scale(255.0)
+        Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0)
     }
 
     fn trace(
@@ -206,12 +206,11 @@ impl Camera {
                 Some((reflection_ray, attenuation)) => {
                     let incoming_color =
                         self.trace(scene, reflection_ray, remaining_calls - 1, rng);
-                    let reflection_color = attenuation.scale(1. / 255.0);
 
                     Color::new(
-                        incoming_color.r * reflection_color.r,
-                        incoming_color.g * reflection_color.g,
-                        incoming_color.b * reflection_color.b,
+                        incoming_color.r * attenuation.r,
+                        incoming_color.g * attenuation.g,
+                        incoming_color.b * attenuation.b,
                     )
                 }
                 None => Color::new(0., 0., 0.),
