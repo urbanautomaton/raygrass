@@ -3,6 +3,7 @@ extern crate indicatif;
 extern crate rayon;
 
 use rand::prelude::*;
+use rand::seq::SliceRandom;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
 use rayon::prelude::*;
@@ -93,38 +94,41 @@ impl Camera {
         let pixel_height = 1. / f64::from(self.img_y);
         let color_scale = 1. / f64::from(samples);
 
-        (0..(self.img_x * self.img_y))
-            .into_par_iter()
-            .for_each(|px| {
-                let x = px % self.img_x;
-                let y = px / self.img_x;
+        let mut pixel_rng = Xoshiro256StarStar::seed_from_u64(0);
+        let mut pixels: std::vec::Vec<u32> = (0..(self.img_x * self.img_y)).collect();
 
-                let mut rng = Xoshiro256StarStar::from_entropy();
+        pixels.shuffle(&mut pixel_rng);
 
-                pb.inc(1);
+        pixels.into_par_iter().for_each(|px| {
+            let x = px % self.img_x;
+            let y = px / self.img_x;
 
-                let mut color_acc = Color::new(0., 0., 0.);
+            let mut rng = Xoshiro256StarStar::from_entropy();
 
-                let x_min = f64::from(x) * pixel_width;
-                let y_min = f64::from(y) * pixel_height;
+            pb.inc(1);
 
-                for _ in 0..samples {
-                    let x_max = x_min + pixel_width;
-                    let y_max = y_min + pixel_height;
+            let mut color_acc = Color::new(0., 0., 0.);
 
-                    let ray = self.ray_for_pixel(&mut rng, (x_min, x_max), (y_min, y_max));
+            let x_min = f64::from(x) * pixel_width;
+            let y_min = f64::from(y) * pixel_height;
 
-                    let color = self.trace(scene, ray, 50, &mut rng);
+            for _ in 0..samples {
+                let x_max = x_min + pixel_width;
+                let y_max = y_min + pixel_height;
 
-                    color_acc = color_acc.add(color);
-                }
+                let ray = self.ray_for_pixel(&mut rng, (x_min, x_max), (y_min, y_max));
 
-                color_acc = color_acc.scale(color_scale);
+                let color = self.trace(scene, ray, 50, &mut rng);
 
-                buf.lock()
-                    .unwrap()
-                    .put_pixel(x, y, image::Rgb(color_acc.into()));
-            });
+                color_acc = color_acc.add(color);
+            }
+
+            color_acc = color_acc.scale(color_scale);
+
+            buf.lock()
+                .unwrap()
+                .put_pixel(x, y, image::Rgb(color_acc.into()));
+        });
 
         buf.lock()
             .unwrap()
