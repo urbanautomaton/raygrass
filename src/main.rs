@@ -30,7 +30,8 @@ fn main() {
     let sin = theta.sin();
 
     let c = look_from - look_at;
-    let rotated_look_from = Vec::new(c.x * cos - c.z * sin, c.y, c.x * sin + c.z * cos) + look_at;
+    let rotated_look_from =
+        Vec::new(c.x * cos - c.z * sin, c.y - sin, c.x * sin + c.z * cos) + look_at;
 
     let camera = Camera::new(
         rotated_look_from,
