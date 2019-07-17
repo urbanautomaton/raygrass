@@ -5,17 +5,29 @@ use crate::vector::Vec;
 
 pub struct Plane<M: Material> {
     point: Vec,
+    u: Vec,
+    v: Vec,
     normal: Vec,
     material: M,
 }
 
 impl<M: Material> Plane<M> {
-    pub fn new(point: Vec, normal: Vec, material: M) -> Self {
+    pub fn new(point: Vec, u: Vec, v: Vec, material: M) -> Self {
+        let normal = (u * v).normalize();
+
         Self {
             point,
-            normal: normal.normalize(),
+            u,
+            v,
+            normal,
             material,
         }
+    }
+
+    pub fn uv(&self, point: Vec) -> (f64, f64) {
+        let pv = point - self.point;
+
+        (pv.dot(self.u), pv.dot(self.v))
     }
 }
 
@@ -27,16 +39,18 @@ impl<M: Material> Hittable for Plane<M> {
             None
         } else {
             let t = self.normal.dot(self.point - ray.origin) / ndotl;
-            let p = ray.at(t);
 
             if t < t_min || t > t_max {
                 None
             } else {
+                let p = ray.at(t);
+                let uv = self.uv(p);
+
                 Some(Hit {
                     t,
                     p,
-                    u: 0.,
-                    v: 0.,
+                    u: uv.0,
+                    v: uv.1,
                     normal: self.normal,
                     material: &self.material,
                 })

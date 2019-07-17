@@ -60,12 +60,12 @@ impl Scene {
                     even: ConstantTexture {
                         color: Color::new(0.2, 0.4, 1.),
                     },
-                    width: 0.15,
+                    width: 0.05,
                 },
             },
         );
         let yellow_sphere = Sphere::new(
-            Vec::new(1.75, 1.5, 6.2),
+            Vec::new(1.75, 2.5, 6.2),
             0.5,
             ReflectiveMaterial {
                 texture: ConstantTexture {
@@ -75,7 +75,8 @@ impl Scene {
         );
         let checkerboard = Plane::new(
             Vec::new(0.0, 0.0, 0.0),
-            Vec::new(0.0, 1.0, 0.0),
+            Vec::new(0.0, 0.0, 1.0),
+            Vec::new(1.0, 0.0, 0.0),
             LambertianMaterial {
                 texture: CheckerboardTexture {
                     odd: ConstantTexture {

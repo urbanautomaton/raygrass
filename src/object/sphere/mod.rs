@@ -21,6 +21,15 @@ impl<M: Material> Sphere<M> {
     fn surface_normal(&self, point: Vec) -> Vec {
         (point - self.center).normalize()
     }
+
+    fn uv(&self, p: Vec) -> (f64, f64) {
+        let unit_point = (p - self.center) / self.radius;
+        let pi = std::f64::consts::PI;
+        let phi = unit_point.x.atan2(unit_point.z);
+        let theta = unit_point.y.asin();
+
+        (1. - (phi + pi) / (2. * pi), (theta + pi / 2.) / pi)
+    }
 }
 
 impl<M: Material> Hittable for Sphere<M> {
@@ -41,12 +50,13 @@ impl<M: Material> Hittable for Sphere<M> {
             if (t_min..t_max).contains(t) {
                 let p = ray.at(*t);
                 let normal = self.surface_normal(p);
+                let uv = self.uv(p);
 
                 return Some(Hit {
                     t: *t,
                     p,
-                    u: 0.,
-                    v: 0.,
+                    u: uv.0,
+                    v: uv.1,
                     normal,
                     material: &self.material,
                 });

@@ -24,12 +24,21 @@ pub struct CheckerboardTexture<T1: Texture, T2: Texture> {
 impl<T1: Texture, T2: Texture> Texture for CheckerboardTexture<T1, T2> {
     fn color(&self, u: f64, v: f64, p: &Vec) -> Color {
         let pitch = std::f64::consts::PI / self.width;
-        let cosines = (pitch * p.x).cos() * (pitch * p.y).cos() * (pitch * p.z).cos();
+        let cosines = (pitch * u).cos() * (pitch * v).cos();
 
         if cosines < 0. {
             self.odd.color(u, v, p)
         } else {
             self.even.color(u, v, p)
         }
+    }
+}
+
+#[allow(dead_code)]
+pub struct UVTexture {}
+
+impl Texture for UVTexture {
+    fn color(&self, u: f64, v: f64, _p: &Vec) -> Color {
+        Color::new(u, v, 0.5)
     }
 }
