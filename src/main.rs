@@ -43,7 +43,8 @@ fn main() {
         img_y,
     );
 
-    let scene = Scene::new();
+    let image = image::open("resources/globe.png").unwrap();
+    let scene: Scene = Scene::new(&image);
 
     camera.capture(&scene, cli_args.samples(), cli_args.outfile())
 }

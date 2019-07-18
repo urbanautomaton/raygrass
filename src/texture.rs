@@ -1,3 +1,5 @@
+use image::*;
+
 use crate::color::Color;
 use crate::vector::Vec;
 
@@ -31,6 +33,26 @@ impl<T1: Texture, T2: Texture> Texture for CheckerboardTexture<T1, T2> {
         } else {
             self.even.color(u, v, p)
         }
+    }
+}
+
+pub struct ImageTexture<'a> {
+    pub image: &'a DynamicImage,
+}
+
+impl<'a> Texture for ImageTexture<'a> {
+    fn color(&self, u: f64, v: f64, _p: &Vec) -> Color {
+        let width = self.image.width();
+        let height = self.image.height();
+        let x = (f64::from(width) * u.fract()) as u32;
+        let y = (f64::from(height) * (1. - v).fract()) as u32;
+        let pixel = self.image.get_pixel(x, y);
+
+        Color::new(
+            f64::from(pixel[0]) / 255.,
+            f64::from(pixel[1]) / 255.,
+            f64::from(pixel[2]) / 255.,
+        )
     }
 }
 

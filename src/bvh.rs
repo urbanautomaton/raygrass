@@ -7,15 +7,15 @@ use rand_xoshiro::Xoshiro256StarStar;
 use crate::hittable::*;
 use crate::ray::*;
 
-pub struct BVH {
-    left: Box<BoundedHittable>,
-    right: Box<BoundedHittable>,
+pub struct BVH<'a> {
+    left: Box<BoundedHittable + 'a>,
+    right: Box<BoundedHittable + 'a>,
     bounding_box: BoundingBox,
 }
 
-impl BVH {
+impl<'a> BVH<'a> {
     fn from_hittables(
-        mut hittables: Vec<Box<BoundedHittable>>,
+        mut hittables: Vec<Box<BoundedHittable + 'a>>,
         mut rng: Xoshiro256StarStar,
     ) -> Self {
         let axis = rng.gen_range(0, 3);
@@ -26,8 +26,8 @@ impl BVH {
                 .unwrap_or(Ordering::Equal)
         });
 
-        let left: Box<BoundedHittable>;
-        let right: Box<BoundedHittable>;
+        let left: Box<BoundedHittable + 'a>;
+        let right: Box<BoundedHittable + 'a>;
 
         match hittables.len() {
             1 => panic!("You can't make a BVH of one hittable, buddy."),
@@ -52,14 +52,14 @@ impl BVH {
         }
     }
 
-    pub fn new(hittables: Vec<Box<BoundedHittable>>) -> Self {
+    pub fn new(hittables: Vec<Box<BoundedHittable + 'a>>) -> Self {
         let rng = Xoshiro256StarStar::seed_from_u64(0);
 
         Self::from_hittables(hittables, rng)
     }
 }
 
-impl Hittable for BVH {
+impl<'a> Hittable for BVH<'a> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         if self.bounding_box.hit(ray, t_min, t_max) {
             if let Some(l_hit) = self.left.hit(ray, t_min, t_max) {
@@ -81,7 +81,7 @@ impl Hittable for BVH {
     }
 }
 
-impl Bounded for BVH {
+impl<'a> Bounded for BVH<'a> {
     fn bounding_box(&self) -> BoundingBox {
         self.bounding_box
     }

@@ -1,3 +1,4 @@
+use image::*;
 use rand::prelude::*;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
@@ -12,13 +13,13 @@ use crate::object::sphere::*;
 use crate::texture::*;
 use crate::vector::Vec;
 
-pub struct Scene {
-    pub objects: std::vec::Vec<Box<Hittable>>,
+pub struct Scene<'a> {
+    pub objects: std::vec::Vec<Box<Hittable + 'a>>,
     pub lights: std::vec::Vec<Light>,
 }
 
-impl Scene {
-    pub fn new() -> Self {
+impl<'a> Scene<'a> {
+    pub fn new(image: &'a DynamicImage) -> Self {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
             0.8,
@@ -64,6 +65,13 @@ impl Scene {
                 },
             },
         );
+        let blue_dot = Sphere::new(
+            Vec::new(3.5, 1.8, 7.0),
+            0.8,
+            LambertianMaterial {
+                texture: ImageTexture { image },
+            },
+        );
         let yellow_sphere = Sphere::new(
             Vec::new(1.75, 2.5, 6.2),
             0.5,
@@ -90,11 +98,12 @@ impl Scene {
             },
         );
 
-        let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable>> = vec![
+        let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable + 'a>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
             Box::new(blue_sphere),
+            Box::new(blue_dot),
             Box::new(yellow_sphere),
         ];
 

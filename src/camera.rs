@@ -168,7 +168,7 @@ impl Camera {
         Ray::new(ray_origin, direction)
     }
 
-    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable>], ray: Ray) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable + 'a>], ray: Ray) -> Option<Hit> {
         let mut result: Option<Hit> = None;
 
         for o in objects {
@@ -194,9 +194,9 @@ impl Camera {
         Color::new(1.0 - 0.5 * t, 1.0 - 0.3 * t, 1.0)
     }
 
-    fn trace(
+    fn trace<'a>(
         &self,
-        scene: &Scene,
+        scene: &'a Scene<'a>,
         ray: Ray,
         remaining_calls: u32,
         rng: &mut Xoshiro256StarStar,
