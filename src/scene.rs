@@ -13,13 +13,13 @@ use crate::object::sphere::*;
 use crate::texture::*;
 use crate::vector::Vec;
 
-pub struct Scene<'a> {
-    pub objects: std::vec::Vec<Box<Hittable + 'a>>,
+pub struct Scene {
+    pub objects: std::vec::Vec<Box<Hittable>>,
     pub lights: std::vec::Vec<Light>,
 }
 
-impl<'a> Scene<'a> {
-    pub fn new(earth: &'a DynamicImage, moon: &'a DynamicImage) -> Self {
+impl Scene {
+    pub fn new(earth: RgbImage, moon: RgbImage) -> Self {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
             0.8,
@@ -105,7 +105,7 @@ impl<'a> Scene<'a> {
             },
         );
 
-        let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable + 'a>> = vec![
+        let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),

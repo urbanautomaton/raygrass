@@ -36,14 +36,14 @@ impl<T1: Texture, T2: Texture> Texture for CheckerboardTexture<T1, T2> {
     }
 }
 
-pub struct ImageTexture<'a> {
+pub struct ImageTexture {
     width: f64,
     height: f64,
-    image: &'a DynamicImage,
+    image: RgbImage,
 }
 
-impl<'a> ImageTexture<'a> {
-    pub fn new(image: &'a DynamicImage) -> Self {
+impl ImageTexture {
+    pub fn new(image: RgbImage) -> Self {
         Self {
             width: f64::from(image.width()),
             height: f64::from(image.height()),
@@ -52,7 +52,7 @@ impl<'a> ImageTexture<'a> {
     }
 }
 
-impl<'a> Texture for ImageTexture<'a> {
+impl Texture for ImageTexture {
     fn color(&self, u: f64, v: f64, _p: &Vec) -> Color {
         let x = (self.width * u.fract()) as u32;
         let y = (self.height * v.fract()) as u32;
