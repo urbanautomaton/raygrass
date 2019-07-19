@@ -69,7 +69,7 @@ impl<'a> Scene<'a> {
             Vec::new(3.5, 1.8, 7.0),
             0.8,
             LambertianMaterial {
-                texture: ImageTexture { image },
+                texture: ImageTexture::new(image),
             },
         );
         let yellow_sphere = Sphere::new(
