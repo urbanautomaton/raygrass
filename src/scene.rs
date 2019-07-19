@@ -19,7 +19,7 @@ pub struct Scene<'a> {
 }
 
 impl<'a> Scene<'a> {
-    pub fn new(image: &'a DynamicImage) -> Self {
+    pub fn new(earth: &'a DynamicImage, moon: &'a DynamicImage) -> Self {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
             0.8,
@@ -69,7 +69,14 @@ impl<'a> Scene<'a> {
             Vec::new(3.5, 1.8, 7.0),
             0.8,
             LambertianMaterial {
-                texture: ImageTexture::new(image),
+                texture: ImageTexture::new(earth),
+            },
+        );
+        let moon = Sphere::new(
+            Vec::new(4.5, 2.3, 6.0),
+            0.2,
+            LambertianMaterial {
+                texture: ImageTexture::new(moon),
             },
         );
         let yellow_sphere = Sphere::new(
@@ -104,6 +111,7 @@ impl<'a> Scene<'a> {
             Box::new(fuzzy_green_sphere),
             Box::new(blue_sphere),
             Box::new(blue_dot),
+            Box::new(moon),
             Box::new(yellow_sphere),
         ];
 
