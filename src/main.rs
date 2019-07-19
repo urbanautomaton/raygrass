@@ -43,7 +43,10 @@ fn main() {
         img_y,
     );
 
-    let scene = Scene::new();
+    let earth = image::open("resources/earth.png").unwrap().to_rgb();
+    let moon = image::open("resources/moon.jpg").unwrap().to_rgb();
+
+    let scene: Scene = Scene::new(earth, moon);
 
     camera.capture(&scene, cli_args.samples(), cli_args.outfile())
 }

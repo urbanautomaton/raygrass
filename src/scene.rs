@@ -1,3 +1,4 @@
+use image::*;
 use rand::prelude::*;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
@@ -18,7 +19,7 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn new() -> Self {
+    pub fn new(earth: RgbImage, moon: RgbImage) -> Self {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
             0.8,
@@ -60,12 +61,26 @@ impl Scene {
                     even: ConstantTexture {
                         color: Color::new(0.2, 0.4, 1.),
                     },
-                    width: 0.15,
+                    width: 0.05,
                 },
             },
         );
+        let blue_dot = Sphere::new(
+            Vec::new(3.5, 1.8, 7.0),
+            0.8,
+            LambertianMaterial {
+                texture: ImageTexture::new(earth),
+            },
+        );
+        let moon = Sphere::new(
+            Vec::new(4.5, 2.3, 6.0),
+            0.2,
+            LambertianMaterial {
+                texture: ImageTexture::new(moon),
+            },
+        );
         let yellow_sphere = Sphere::new(
-            Vec::new(1.75, 1.5, 6.2),
+            Vec::new(1.75, 2.5, 6.2),
             0.5,
             ReflectiveMaterial {
                 texture: ConstantTexture {
@@ -75,7 +90,8 @@ impl Scene {
         );
         let checkerboard = Plane::new(
             Vec::new(0.0, 0.0, 0.0),
-            Vec::new(0.0, 1.0, 0.0),
+            Vec::new(0.0, 0.0, 1.0),
+            Vec::new(1.0, 0.0, 0.0),
             LambertianMaterial {
                 texture: CheckerboardTexture {
                     odd: ConstantTexture {
@@ -94,6 +110,8 @@ impl Scene {
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
             Box::new(blue_sphere),
+            Box::new(blue_dot),
+            Box::new(moon),
             Box::new(yellow_sphere),
         ];
 
