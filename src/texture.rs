@@ -1,6 +1,7 @@
 use image::*;
 
 use crate::color::Color;
+use crate::perlin::Perlin;
 use crate::vector::Vec;
 
 pub trait Texture: Send + Sync {
@@ -72,5 +73,25 @@ pub struct UVTexture {}
 impl Texture for UVTexture {
     fn color(&self, u: f64, v: f64, _p: &Vec) -> Color {
         Color::new(u, v, 0.5)
+    }
+}
+
+pub struct NoiseTexture {
+    perlin: Perlin,
+    scale: f64,
+}
+
+impl NoiseTexture {
+    pub fn new(scale: f64) -> Self {
+        Self {
+            perlin: Perlin::new(),
+            scale,
+        }
+    }
+}
+
+impl Texture for NoiseTexture {
+    fn color(&self, _u: f64, _v: f64, p: &Vec) -> Color {
+        Color::new(1., 1., 1.).scale(self.perlin.noise(&(*p * self.scale)))
     }
 }
