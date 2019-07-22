@@ -79,6 +79,13 @@ impl Scene {
                 texture: ImageTexture::new(moon),
             },
         );
+        let noise_sphere = Sphere::new(
+            Vec::new(0.5, 2.5, 6.2),
+            0.5,
+            LambertianMaterial {
+                texture: NoiseTexture::new(8.),
+            },
+        );
         let yellow_sphere = Sphere::new(
             Vec::new(1.75, 2.5, 6.2),
             0.5,
@@ -112,6 +119,7 @@ impl Scene {
             Box::new(blue_sphere),
             Box::new(blue_dot),
             Box::new(moon),
+            Box::new(noise_sphere),
             Box::new(yellow_sphere),
         ];
 
