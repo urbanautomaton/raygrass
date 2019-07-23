@@ -98,9 +98,6 @@ impl Perlin {
             }
         }
 
-        accum += 0.5;
-        accum = accum.max(0.).min(1.);
-
         accum
     }
 }

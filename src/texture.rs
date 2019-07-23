@@ -92,6 +92,9 @@ impl NoiseTexture {
 
 impl Texture for NoiseTexture {
     fn color(&self, _u: f64, _v: f64, p: &Vec) -> Color {
-        Color::new(1., 1., 1.).scale(self.perlin.noise(&(*p * self.scale)))
+        let scaled_p = *p * self.scale;
+        let noise = self.perlin.noise(&scaled_p);
+
+        Color::new(1., 1., 1.).scale(0.5 * (1. + noise))
     }
 }
