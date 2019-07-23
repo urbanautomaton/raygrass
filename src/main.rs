@@ -6,6 +6,7 @@ mod hittable;
 mod light;
 mod material;
 mod object;
+mod perlin;
 mod ray;
 mod scene;
 mod texture;
