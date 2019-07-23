@@ -44,8 +44,8 @@ fn main() {
         img_y,
     );
 
-    let earth = image::open("resources/earth.png").unwrap().to_rgb();
-    let moon = image::open("resources/moon.jpg").unwrap().to_rgb();
+    let earth = image::open("resources/earth.png").unwrap();
+    let moon = image::open("resources/moon.jpg").unwrap();
 
     let scene: Scene = Scene::new(earth, moon);
 

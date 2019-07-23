@@ -44,11 +44,11 @@ pub struct ImageTexture {
 }
 
 impl ImageTexture {
-    pub fn new(image: RgbImage) -> Self {
+    pub fn new(image: DynamicImage) -> Self {
         Self {
             width: f64::from(image.width()),
             height: f64::from(image.height()),
-            image,
+            image: image.flipv().to_rgb(),
         }
     }
 }

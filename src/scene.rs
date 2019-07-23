@@ -19,7 +19,7 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn new(earth: RgbImage, moon: RgbImage) -> Self {
+    pub fn new(earth: DynamicImage, moon: DynamicImage) -> Self {
         let glass_sphere = Sphere::new(
             Vec::new(-1.0, 0.8, 5.0),
             0.8,
