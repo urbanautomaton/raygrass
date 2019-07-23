@@ -74,6 +74,20 @@ impl Perlin {
         Self::perlin_interpolate(&weight_vectors, u, v, w)
     }
 
+    pub fn turbulence(&self, point: &Vec, depth: u32) -> f64 {
+        let mut accum = 0.;
+        let mut temp_p = *point;
+        let mut weight = 1.;
+
+        for _ in 0..depth {
+            accum += weight * self.noise(&temp_p);
+            weight *= 0.5;
+            temp_p = temp_p * 2.;
+        }
+
+        accum.abs()
+    }
+
     fn perlin_interpolate(c: &[[[Vec; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
         let uu = u * u * (3. - 2. * u);
         let vv = v * v * (3. - 2. * v);

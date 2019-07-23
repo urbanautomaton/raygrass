@@ -76,12 +76,14 @@ impl Texture for UVTexture {
     }
 }
 
+#[allow(dead_code)]
 pub struct NoiseTexture {
     perlin: Perlin,
     scale: f64,
 }
 
 impl NoiseTexture {
+    #[allow(dead_code)]
     pub fn new(scale: f64) -> Self {
         Self {
             perlin: Perlin::new(),
@@ -96,5 +98,29 @@ impl Texture for NoiseTexture {
         let noise = self.perlin.noise(&scaled_p);
 
         Color::new(1., 1., 1.).scale(0.5 * (1. + noise))
+    }
+}
+
+pub struct MarbleTexture {
+    perlin: Perlin,
+    scale: f64,
+}
+
+impl MarbleTexture {
+    pub fn new(scale: f64) -> Self {
+        Self {
+            perlin: Perlin::new(),
+            scale,
+        }
+    }
+}
+
+impl Texture for MarbleTexture {
+    fn color(&self, _u: f64, _v: f64, p: &Vec) -> Color {
+        let scaled_p = *p * self.scale;
+        let noise = self.perlin.turbulence(&scaled_p, 7);
+        let gray_scale = 0.5 * (1. + (self.scale * p.z.sin() + 10. * noise).sin());
+
+        Color::new(1., 1., 1.).scale(gray_scale)
     }
 }
