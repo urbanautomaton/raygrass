@@ -3,7 +3,6 @@ mod camera;
 mod cli;
 mod color;
 mod hittable;
-mod light;
 mod material;
 mod object;
 mod perlin;
