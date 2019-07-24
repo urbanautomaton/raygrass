@@ -6,7 +6,6 @@ use rand_xoshiro::Xoshiro256StarStar;
 use crate::bvh::*;
 use crate::color::*;
 use crate::hittable::*;
-use crate::light::Light;
 use crate::material::*;
 use crate::object::plane::*;
 use crate::object::sphere::*;
@@ -15,7 +14,6 @@ use crate::vector::Vec;
 
 pub struct Scene {
     pub objects: std::vec::Vec<Box<Hittable>>,
-    pub lights: std::vec::Vec<Light>,
 }
 
 impl Scene {
@@ -163,13 +161,6 @@ impl Scene {
         let objects: std::vec::Vec<Box<Hittable>> =
             vec![Box::new(BVH::new(boundeds)), Box::new(checkerboard)];
 
-        let lights = vec![
-            Light::new(Vec::new(5.0, 5.0, 5.0), 500.0),
-            Light::new(Vec::new(-5.0, 3.0, 1.0), 400.0),
-            Light::new(Vec::new(0.0, 1000.0, 5.0), 1e7),
-            Light::new(Vec::new(-0.8, 1.3, 4.1), 2.0),
-        ];
-
-        Self { objects, lights }
+        Self { objects }
     }
 }
