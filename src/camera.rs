@@ -57,8 +57,8 @@ impl Camera {
         let width = height * aspect;
         let origin = look_from;
         let w = (look_at - look_from).normalize();
-        let u = (Vec::new(0., 1., 0.) * w).normalize();
-        let v = (u * w).normalize();
+        let u = (w * Vec::new(0., 1., 0.)).normalize();
+        let v = (w * u).normalize();
         let top_left = origin - (u * width / 2.) - (v * height / 2.) + w * focus_dist;
 
         Self {
