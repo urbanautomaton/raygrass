@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+(1..250).each do |frame|
+  time = 10.0 * frame / 250
+  `./target/release/raygrass --samples 250 --resolution 1280x960 --time #{time} frames/#{"%03d" % frame}.png`
+end
