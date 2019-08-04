@@ -33,10 +33,10 @@ impl From<[f64; 3]> for Vector3 {
     }
 }
 
-impl Index<u64> for Vector3 {
+impl Index<usize> for Vector3 {
     type Output = f64;
 
-    fn index(&self, index: u64) -> &Self::Output {
+    fn index(&self, index: usize) -> &Self::Output {
         match index {
             0 => &self.x,
             1 => &self.y,

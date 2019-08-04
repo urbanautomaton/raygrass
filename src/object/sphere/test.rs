@@ -11,7 +11,7 @@ mod hit {
 
     fn subject() -> Subject {
         Subject::new(
-            Vector3::new(0.0, 0.0, 0.0),
+            Point3::new(0.0, 0.0, 0.0),
             1.0,
             LambertianMaterial {
                 texture: ConstantTexture {
@@ -24,7 +24,7 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_at_the_center() {
         let ray = Ray {
-            origin: Vector3::new(-2.0, 0.0, 0.0),
+            origin: Point3::new(-2.0, 0.0, 0.0),
             direction: Vector3::new(1.0, 0.0, 0.0),
         };
 
@@ -34,7 +34,7 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_from_the_other_direction() {
         let ray = Ray {
-            origin: Vector3::new(2.0, 0.0, 0.0),
+            origin: Point3::new(2.0, 0.0, 0.0),
             direction: Vector3::new(-1.0, 0.0, 0.0),
         };
 
@@ -44,7 +44,7 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_from_the_top() {
         let ray = Ray {
-            origin: Vector3::new(0.0, 2.0, 0.0),
+            origin: Point3::new(0.0, 2.0, 0.0),
             direction: Vector3::new(0.0, -1.0, 0.0),
         };
 
@@ -54,7 +54,7 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_from_the_diagonal() {
         let ray = Ray {
-            origin: Vector3::new(2.0, 2.0, 0.0),
+            origin: Point3::new(2.0, 2.0, 0.0),
             direction: Vector3::new(-1.0, -1.0, 0.0).normalize(),
         };
 
@@ -68,7 +68,7 @@ mod hit {
     #[test]
     fn it_returns_none_for_a_ray_pointing_away_from_the_sphere() {
         let ray = Ray {
-            origin: Vector3::new(2.0, 0.0, 0.0),
+            origin: Point3::new(2.0, 0.0, 0.0),
             direction: Vector3::new(1.0, 0.0, 0.0),
         };
 

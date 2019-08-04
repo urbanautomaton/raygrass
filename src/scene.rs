@@ -5,12 +5,12 @@ use rand_xoshiro::Xoshiro256StarStar;
 
 use crate::bvh::*;
 use crate::color::*;
+use crate::geometry::*;
 use crate::hittable::*;
 use crate::material::*;
 use crate::object::plane::*;
 use crate::object::sphere::*;
 use crate::texture::*;
-use crate::geometry::*;
 
 pub struct Scene {
     pub objects: Vec<Box<Hittable>>,
@@ -19,7 +19,7 @@ pub struct Scene {
 impl Scene {
     pub fn new(earth: DynamicImage, moon: DynamicImage) -> Self {
         let glass_sphere = Sphere::new(
-            Vector3::new(-1.0, 0.8, 5.0),
+            Point3::new(-1.0, 0.8, 5.0),
             0.8,
             DielectricMaterial {
                 texture: ConstantTexture {
@@ -29,7 +29,7 @@ impl Scene {
             },
         );
         let small_glass_sphere = Sphere::new(
-            Vector3::new(1.2, 1.5, 3.0),
+            Point3::new(1.2, 1.5, 3.0),
             0.4,
             DielectricMaterial {
                 texture: ConstantTexture {
@@ -39,7 +39,7 @@ impl Scene {
             },
         );
         let fuzzy_green_sphere = Sphere::new(
-            Vector3::new(1.0, 0.8, 5.0),
+            Point3::new(1.0, 0.8, 5.0),
             0.8,
             FuzzyReflectiveMaterial {
                 texture: ConstantTexture {
@@ -49,7 +49,7 @@ impl Scene {
             },
         );
         let blue_sphere = Sphere::new(
-            Vector3::new(2.5, 0.8, 5.0),
+            Point3::new(2.5, 0.8, 5.0),
             0.8,
             LambertianMaterial {
                 texture: CheckerboardTexture {
@@ -64,28 +64,28 @@ impl Scene {
             },
         );
         let blue_dot = Sphere::new(
-            Vector3::new(3.5, 1.8, 7.0),
+            Point3::new(3.5, 1.8, 7.0),
             0.8,
             LambertianMaterial {
                 texture: ImageTexture::new(earth),
             },
         );
         let moon = Sphere::new(
-            Vector3::new(4.5, 2.3, 6.0),
+            Point3::new(4.5, 2.3, 6.0),
             0.2,
             LambertianMaterial {
                 texture: ImageTexture::new(moon),
             },
         );
         let marble_sphere = Sphere::new(
-            Vector3::new(0.5, 2.5, 6.2),
+            Point3::new(0.5, 2.5, 6.2),
             0.5,
             LambertianMaterial {
                 texture: MarbleTexture::new(10.),
             },
         );
         let yellow_sphere = Sphere::new(
-            Vector3::new(1.75, 2.5, 6.2),
+            Point3::new(1.75, 2.5, 6.2),
             0.5,
             ReflectiveMaterial {
                 texture: ConstantTexture {
@@ -94,7 +94,7 @@ impl Scene {
             },
         );
         let checkerboard = Plane::new(
-            Vector3::new(0.0, 0.0, 0.0),
+            Point3::new(0.0, 0.0, 0.0),
             Vector3::new(0.0, 0.0, 1.0),
             Vector3::new(1.0, 0.0, 0.0),
             LambertianMaterial {
@@ -128,7 +128,7 @@ impl Scene {
             let texture = ConstantTexture {
                 color: Color::from(color_coords),
             };
-            let position = Vector3::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.));
+            let position = Point3::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.));
             let radius = 0.1;
 
             match rng.gen_range(0u32, 3) {

@@ -18,7 +18,7 @@ use crate::ray::Ray;
 use crate::scene::Scene;
 
 struct Film {
-    top_left: Vector3,
+    top_left: Point3,
     u: Vector3,
     v: Vector3,
     width: f64,
@@ -26,13 +26,13 @@ struct Film {
 }
 
 impl Film {
-    pub fn project(&self, x: f64, y: f64) -> Vector3 {
+    pub fn project(&self, x: f64, y: f64) -> Point3 {
         self.top_left + self.u * x * self.width + self.v * y * self.height
     }
 }
 
 pub struct Camera {
-    origin: Vector3,
+    origin: Point3,
     film: Film,
     img_x: u32,
     img_y: u32,
@@ -43,8 +43,8 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(
-        look_from: Vector3,
-        look_at: Vector3,
+        look_from: Point3,
+        look_at: Point3,
         fov: f64,
         aperture: f64,
         focus_dist: f64,

@@ -48,7 +48,7 @@ impl Perlin {
     }
 
     #[allow(clippy::many_single_char_names)]
-    pub fn noise(&self, point: &Vector3) -> f64 {
+    pub fn noise(&self, point: &Point3) -> f64 {
         let u = point.x - point.x.floor();
         let v = point.y - point.y.floor();
         let w = point.z - point.z.floor();
@@ -74,7 +74,7 @@ impl Perlin {
         Self::perlin_interpolate(&weight_vectors, u, v, w)
     }
 
-    pub fn turbulence(&self, point: &Vector3, depth: u32) -> f64 {
+    pub fn turbulence(&self, point: &Point3, depth: u32) -> f64 {
         let mut accum = 0.;
         let mut temp_p = *point;
         let mut weight = 1.;

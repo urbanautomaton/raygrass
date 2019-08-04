@@ -4,13 +4,13 @@ use crate::material::Material;
 use crate::ray::Ray;
 
 pub struct Sphere<M: Material> {
-    center: Vector3,
+    center: Point3,
     radius: f64,
     material: M,
 }
 
 impl<M: Material> Sphere<M> {
-    pub fn new(center: Vector3, radius: f64, material: M) -> Self {
+    pub fn new(center: Point3, radius: f64, material: M) -> Self {
         Self {
             center,
             radius,
@@ -18,11 +18,11 @@ impl<M: Material> Sphere<M> {
         }
     }
 
-    fn surface_normal(&self, point: Vector3) -> Vector3 {
+    fn surface_normal(&self, point: Point3) -> Vector3 {
         (point - self.center).normalize()
     }
 
-    fn uv(&self, p: Vector3) -> (f64, f64) {
+    fn uv(&self, p: Point3) -> (f64, f64) {
         let unit_point = (p - self.center) / self.radius;
         let pi = std::f64::consts::PI;
         let phi = unit_point.x.atan2(unit_point.z);
