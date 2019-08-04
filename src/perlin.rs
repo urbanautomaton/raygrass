@@ -6,7 +6,7 @@ use rand_xoshiro::Xoshiro256StarStar;
 use crate::geometry::*;
 
 pub struct Perlin {
-    rands: [Vec; 256],
+    rands: [Vector3; 256],
     perm_x: [usize; 256],
     perm_y: [usize; 256],
     perm_z: [usize; 256],
@@ -15,12 +15,12 @@ pub struct Perlin {
 impl Perlin {
     pub fn new() -> Self {
         let mut rng = Xoshiro256StarStar::seed_from_u64(0);
-        let mut rands: [Vec; 256] = [Vec::new(0., 0., 0.); 256];
+        let mut rands: [Vector3; 256] = [Vector3::new(0., 0., 0.); 256];
 
         for elem in rands.iter_mut() {
             let coords: [f64; 3] = rng.gen();
 
-            *elem = ((Vec::from(coords) * 2.) - Vec::new(1., 1., 1.)).normalize();
+            *elem = ((Vector3::from(coords) * 2.) - Vector3::new(1., 1., 1.)).normalize();
         }
 
         let mut xs: std::vec::Vec<usize> = (0..256).collect();
@@ -48,7 +48,7 @@ impl Perlin {
     }
 
     #[allow(clippy::many_single_char_names)]
-    pub fn noise(&self, point: &Vec) -> f64 {
+    pub fn noise(&self, point: &Vector3) -> f64 {
         let u = point.x - point.x.floor();
         let v = point.y - point.y.floor();
         let w = point.z - point.z.floor();
@@ -57,7 +57,7 @@ impl Perlin {
         let j = point.y.floor() as usize;
         let k = point.z.floor() as usize;
 
-        let mut weight_vectors: [[[Vec; 2]; 2]; 2] = [[[Vec::new(0., 0., 0.); 2]; 2]; 2];
+        let mut weight_vectors: [[[Vector3; 2]; 2]; 2] = [[[Vector3::new(0., 0., 0.); 2]; 2]; 2];
 
         for (di, item_i) in weight_vectors.iter_mut().enumerate().take(2) {
             for (dj, item_j) in item_i.iter_mut().enumerate().take(2) {
@@ -74,7 +74,7 @@ impl Perlin {
         Self::perlin_interpolate(&weight_vectors, u, v, w)
     }
 
-    pub fn turbulence(&self, point: &Vec, depth: u32) -> f64 {
+    pub fn turbulence(&self, point: &Vector3, depth: u32) -> f64 {
         let mut accum = 0.;
         let mut temp_p = *point;
         let mut weight = 1.;
@@ -88,7 +88,7 @@ impl Perlin {
         accum.abs()
     }
 
-    fn perlin_interpolate(c: &[[[Vec; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
+    fn perlin_interpolate(c: &[[[Vector3; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
         let uu = u * u * (3. - 2. * u);
         let vv = v * v * (3. - 2. * v);
         let ww = w * w * (3. - 2. * w);
@@ -102,7 +102,7 @@ impl Perlin {
                     let j_f = j as f64;
                     let k_f = k as f64;
 
-                    let weight_v = Vec::new(u - i_f, v - j_f, w - k_f);
+                    let weight_v = Vector3::new(u - i_f, v - j_f, w - k_f);
 
                     accum += (i_f * uu + (1. - i_f) * (1. - uu))
                         * (j_f * vv + (1. - j_f) * (1. - vv))

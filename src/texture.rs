@@ -1,11 +1,11 @@
 use image::*;
 
 use crate::color::Color;
-use crate::perlin::Perlin;
 use crate::geometry::*;
+use crate::perlin::Perlin;
 
 pub trait Texture: Send + Sync {
-    fn color(&self, u: f64, v: f64, p: &Vec) -> Color;
+    fn color(&self, u: f64, v: f64, p: &Vector3) -> Color;
 }
 
 pub struct ConstantTexture {
@@ -13,7 +13,7 @@ pub struct ConstantTexture {
 }
 
 impl Texture for ConstantTexture {
-    fn color(&self, _u: f64, _v: f64, _p: &Vec) -> Color {
+    fn color(&self, _u: f64, _v: f64, _p: &Vector3) -> Color {
         self.color
     }
 }
@@ -25,7 +25,7 @@ pub struct CheckerboardTexture<T1: Texture, T2: Texture> {
 }
 
 impl<T1: Texture, T2: Texture> Texture for CheckerboardTexture<T1, T2> {
-    fn color(&self, u: f64, v: f64, p: &Vec) -> Color {
+    fn color(&self, u: f64, v: f64, p: &Vector3) -> Color {
         let pitch = std::f64::consts::PI / self.width;
         let sines = (pitch * u).sin() * (pitch * v).sin();
 
@@ -54,7 +54,7 @@ impl ImageTexture {
 }
 
 impl Texture for ImageTexture {
-    fn color(&self, u: f64, v: f64, _p: &Vec) -> Color {
+    fn color(&self, u: f64, v: f64, _p: &Vector3) -> Color {
         let x = (self.width * u.fract()) as u32;
         let y = (self.height * v.fract()) as u32;
         let pixel = self.image.get_pixel(x, y);
@@ -71,7 +71,7 @@ impl Texture for ImageTexture {
 pub struct UVTexture {}
 
 impl Texture for UVTexture {
-    fn color(&self, u: f64, v: f64, _p: &Vec) -> Color {
+    fn color(&self, u: f64, v: f64, _p: &Vector3) -> Color {
         Color::new(u, v, 0.5)
     }
 }
@@ -93,7 +93,7 @@ impl NoiseTexture {
 }
 
 impl Texture for NoiseTexture {
-    fn color(&self, _u: f64, _v: f64, p: &Vec) -> Color {
+    fn color(&self, _u: f64, _v: f64, p: &Vector3) -> Color {
         let scaled_p = *p * self.scale;
         let noise = self.perlin.noise(&scaled_p);
 
@@ -116,7 +116,7 @@ impl MarbleTexture {
 }
 
 impl Texture for MarbleTexture {
-    fn color(&self, _u: f64, _v: f64, p: &Vec) -> Color {
+    fn color(&self, _u: f64, _v: f64, p: &Vector3) -> Color {
         let scaled_p = *p * self.scale;
         let noise = self.perlin.turbulence(&scaled_p, 7);
         let gray_scale = 0.5 * (1. + (self.scale * p.z.sin() + 10. * noise).sin());

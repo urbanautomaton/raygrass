@@ -1,16 +1,16 @@
+use crate::geometry::*;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::geometry::*;
 
 pub struct Sphere<M: Material> {
-    center: Vec,
+    center: Vector3,
     radius: f64,
     material: M,
 }
 
 impl<M: Material> Sphere<M> {
-    pub fn new(center: Vec, radius: f64, material: M) -> Self {
+    pub fn new(center: Vector3, radius: f64, material: M) -> Self {
         Self {
             center,
             radius,
@@ -18,11 +18,11 @@ impl<M: Material> Sphere<M> {
         }
     }
 
-    fn surface_normal(&self, point: Vec) -> Vec {
+    fn surface_normal(&self, point: Vector3) -> Vector3 {
         (point - self.center).normalize()
     }
 
-    fn uv(&self, p: Vec) -> (f64, f64) {
+    fn uv(&self, p: Vector3) -> (f64, f64) {
         let unit_point = (p - self.center) / self.radius;
         let pi = std::f64::consts::PI;
         let phi = unit_point.x.atan2(unit_point.z);
@@ -69,7 +69,7 @@ impl<M: Material> Hittable for Sphere<M> {
 
 impl<M: Material> Bounded for Sphere<M> {
     fn bounding_box(&self) -> BoundingBox {
-        let offset = Vec::new(self.radius, self.radius, self.radius);
+        let offset = Vector3::new(self.radius, self.radius, self.radius);
 
         BoundingBox {
             min: self.center - offset,

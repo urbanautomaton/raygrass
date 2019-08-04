@@ -2,10 +2,10 @@ use rand::Rng;
 use rand_xoshiro::Xoshiro256StarStar;
 
 use crate::color::Color;
+use crate::geometry::*;
 use crate::hittable::Hit;
 use crate::ray::Ray;
 use crate::texture::Texture;
-use crate::geometry::*;
 
 pub trait Material: Send + Sync {
     fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<(Ray, Color)> {
@@ -48,7 +48,7 @@ impl<T: Texture> Material for FuzzyReflectiveMaterial<T> {
         let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
 
         let coords: [f64; 3] = rng.gen();
-        let fuzz_vector = Vec::from(coords) * self.fuzz;
+        let fuzz_vector = Vector3::from(coords) * self.fuzz;
         let scattered = reflection_direction + fuzz_vector;
 
         if scattered.dot(hit.normal) > 0.0 {
@@ -68,13 +68,13 @@ pub struct LambertianMaterial<T: Texture> {
 }
 
 impl<T: Texture> LambertianMaterial<T> {
-    fn random_in_unit_sphere(rng: &mut Xoshiro256StarStar) -> Vec {
+    fn random_in_unit_sphere(rng: &mut Xoshiro256StarStar) -> Vector3 {
         let mut vec;
 
         loop {
             let coords: [f64; 3] = rng.gen();
 
-            vec = Vec::from(coords);
+            vec = Vector3::from(coords);
 
             if vec.length() <= 1.0 {
                 break vec;
@@ -101,7 +101,7 @@ pub struct DielectricMaterial<T: Texture> {
 }
 
 impl<T: Texture> DielectricMaterial<T> {
-    fn refract(direction: &Vec, normal: &Vec, ni_over_nt: f64) -> Option<Vec> {
+    fn refract(direction: &Vector3, normal: &Vector3, ni_over_nt: f64) -> Option<Vector3> {
         let uv = direction.normalize();
         let dt = uv.dot(*normal);
         let discriminant = 1.0 - ni_over_nt.powi(2) * (1.0 - dt.powi(2));

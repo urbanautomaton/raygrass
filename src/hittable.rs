@@ -1,15 +1,15 @@
 use std::mem;
 
+use crate::geometry::*;
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::geometry::*;
 
 pub struct Hit<'a> {
     pub t: f64,
-    pub p: Vec,
+    pub p: Vector3,
     pub u: f64,
     pub v: f64,
-    pub normal: Vec,
+    pub normal: Vector3,
     pub material: &'a Material,
 }
 
@@ -26,19 +26,19 @@ impl<T: Bounded + Hittable> BoundedHittable for T {}
 
 #[derive(Debug, Copy, Clone)]
 pub struct BoundingBox {
-    pub min: Vec,
-    pub max: Vec,
+    pub min: Vector3,
+    pub max: Vector3,
 }
 
 impl BoundingBox {
     pub fn combine(boxes: &[Self]) -> Self {
         boxes[1..].iter().fold(boxes[0], |acc, b| Self {
-            min: Vec {
+            min: Vector3 {
                 x: acc.min.x.min(b.min.x),
                 y: acc.min.y.min(b.min.y),
                 z: acc.min.z.min(b.min.z),
             },
-            max: Vec {
+            max: Vector3 {
                 x: acc.max.x.max(b.max.x),
                 y: acc.max.y.max(b.max.y),
                 z: acc.max.z.max(b.max.z),
@@ -75,12 +75,12 @@ mod tests {
     mod bounding_box {
         use super::*;
         const SUBJECT: BoundingBox = BoundingBox {
-            min: Vec {
+            min: Vector3 {
                 x: 0.,
                 y: 0.,
                 z: 0.,
             },
-            max: Vec {
+            max: Vector3 {
                 x: 1.,
                 y: 1.,
                 z: 1.,
@@ -94,40 +94,40 @@ mod tests {
         #[test]
         fn a_hit_on_x_y_plane() {
             assert!(is_hit(&Ray {
-                origin: Vec::new(0.5, 0.5, -1.),
-                direction: Vec::new(0., 0., 1.),
+                origin: Vector3::new(0.5, 0.5, -1.),
+                direction: Vector3::new(0., 0., 1.),
             }))
         }
 
         #[test]
         fn a_hit_for_ray_within_box() {
             assert!(is_hit(&Ray {
-                origin: Vec::new(0.5, 0.5, 0.5),
-                direction: Vec::new(0., 0., 1.),
+                origin: Vector3::new(0.5, 0.5, 0.5),
+                direction: Vector3::new(0., 0., 1.),
             }))
         }
 
         #[test]
         fn a_ray_pointing_away() {
             assert!(!is_hit(&Ray {
-                origin: Vec::new(0.5, 0.5, -1.),
-                direction: Vec::new(0., 0., -1.),
+                origin: Vector3::new(0.5, 0.5, -1.),
+                direction: Vector3::new(0., 0., -1.),
             }))
         }
 
         #[test]
         fn a_glancing_ray() {
             assert!(is_hit(&Ray {
-                origin: Vec::new(0., 0., -1.),
-                direction: Vec::new(0., 0., 1.),
+                origin: Vector3::new(0., 0., -1.),
+                direction: Vector3::new(0., 0., 1.),
             }))
         }
 
         #[test]
         fn a_diagonal_ray() {
             assert!(is_hit(&Ray {
-                origin: Vec::new(0., 0., 0.),
-                direction: Vec::new(1., 1., 1.),
+                origin: Vector3::new(0., 0., 0.),
+                direction: Vector3::new(1., 1., 1.),
             }))
         }
     }

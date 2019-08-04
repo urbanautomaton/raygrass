@@ -11,7 +11,7 @@ mod hit {
 
     fn subject() -> Subject {
         Subject::new(
-            Vec::new(0.0, 0.0, 0.0),
+            Vector3::new(0.0, 0.0, 0.0),
             1.0,
             LambertianMaterial {
                 texture: ConstantTexture {
@@ -24,8 +24,8 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_at_the_center() {
         let ray = Ray {
-            origin: Vec::new(-2.0, 0.0, 0.0),
-            direction: Vec::new(1.0, 0.0, 0.0),
+            origin: Vector3::new(-2.0, 0.0, 0.0),
+            direction: Vector3::new(1.0, 0.0, 0.0),
         };
 
         assert_eq!(subject().hit(&ray, 0.0, std::f64::INFINITY).unwrap().t, 1.0);
@@ -34,8 +34,8 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_from_the_other_direction() {
         let ray = Ray {
-            origin: Vec::new(2.0, 0.0, 0.0),
-            direction: Vec::new(-1.0, 0.0, 0.0),
+            origin: Vector3::new(2.0, 0.0, 0.0),
+            direction: Vector3::new(-1.0, 0.0, 0.0),
         };
 
         assert_eq!(subject().hit(&ray, 0.0, std::f64::INFINITY).unwrap().t, 1.0);
@@ -44,8 +44,8 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_from_the_top() {
         let ray = Ray {
-            origin: Vec::new(0.0, 2.0, 0.0),
-            direction: Vec::new(0.0, -1.0, 0.0),
+            origin: Vector3::new(0.0, 2.0, 0.0),
+            direction: Vector3::new(0.0, -1.0, 0.0),
         };
 
         assert_eq!(subject().hit(&ray, 0.0, std::f64::INFINITY).unwrap().t, 1.0);
@@ -54,8 +54,8 @@ mod hit {
     #[test]
     fn it_returns_the_distance_for_a_ray_pointing_from_the_diagonal() {
         let ray = Ray {
-            origin: Vec::new(2.0, 2.0, 0.0),
-            direction: Vec::new(-1.0, -1.0, 0.0).normalize(),
+            origin: Vector3::new(2.0, 2.0, 0.0),
+            direction: Vector3::new(-1.0, -1.0, 0.0).normalize(),
         };
 
         if let Some(hit) = subject().hit(&ray, 0.0, std::f64::INFINITY) {
@@ -68,8 +68,8 @@ mod hit {
     #[test]
     fn it_returns_none_for_a_ray_pointing_away_from_the_sphere() {
         let ray = Ray {
-            origin: Vec::new(2.0, 0.0, 0.0),
-            direction: Vec::new(1.0, 0.0, 0.0),
+            origin: Vector3::new(2.0, 0.0, 0.0),
+            direction: Vector3::new(1.0, 0.0, 0.0),
         };
 
         assert!(subject().hit(&ray, 0.0, std::f64::INFINITY).is_none());

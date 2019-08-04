@@ -1,13 +1,13 @@
 use std::ops::{Add, Div, Index, Mul, Sub};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct Vec {
+pub struct Vector3 {
     pub x: f64,
     pub y: f64,
     pub z: f64,
 }
 
-impl Vec {
+impl Vector3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
@@ -16,16 +16,16 @@ impl Vec {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
     }
 
-    pub fn normalize(&self) -> Vec {
+    pub fn normalize(&self) -> Vector3 {
         *self / self.length()
     }
 
-    pub fn dot(&self, other: Vec) -> f64 {
+    pub fn dot(&self, other: Vector3) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 }
 
-impl From<[f64; 3]> for Vec {
+impl From<[f64; 3]> for Vector3 {
     fn from(coords: [f64; 3]) -> Self {
         let [x, y, z] = coords;
 
@@ -33,7 +33,7 @@ impl From<[f64; 3]> for Vec {
     }
 }
 
-impl Index<u64> for Vec {
+impl Index<u64> for Vector3 {
     type Output = f64;
 
     fn index(&self, index: u64) -> &Self::Output {
@@ -41,12 +41,12 @@ impl Index<u64> for Vec {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
-            _ => panic!(format!("Index {} out of range for Vec", index)),
+            _ => panic!(format!("Index {} out of range for Vector3", index)),
         }
     }
 }
 
-impl Add for Vec {
+impl Add for Vector3 {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
@@ -54,7 +54,7 @@ impl Add for Vec {
     }
 }
 
-impl Sub for Vec {
+impl Sub for Vector3 {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
@@ -62,7 +62,7 @@ impl Sub for Vec {
     }
 }
 
-impl Mul<f64> for Vec {
+impl Mul<f64> for Vector3 {
     type Output = Self;
 
     fn mul(self, scalar: f64) -> Self::Output {
@@ -70,16 +70,16 @@ impl Mul<f64> for Vec {
     }
 }
 
-impl Mul for Vec {
+impl Mul for Vector3 {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self::Output {
-        let Vec {
+        let Vector3 {
             x: ax,
             y: ay,
             z: az,
         } = self;
-        let Vec {
+        let Vector3 {
             x: bx,
             y: by,
             z: bz,
@@ -89,7 +89,7 @@ impl Mul for Vec {
     }
 }
 
-impl Div<f64> for Vec {
+impl Div<f64> for Vector3 {
     type Output = Self;
 
     fn div(self, scalar: f64) -> Self::Output {

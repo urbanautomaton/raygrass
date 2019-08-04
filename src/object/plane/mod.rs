@@ -1,18 +1,18 @@
+use crate::geometry::*;
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::geometry::*;
 
 pub struct Plane<M: Material> {
-    point: Vec,
-    u: Vec,
-    v: Vec,
-    normal: Vec,
+    point: Vector3,
+    u: Vector3,
+    v: Vector3,
+    normal: Vector3,
     material: M,
 }
 
 impl<M: Material> Plane<M> {
-    pub fn new(point: Vec, u: Vec, v: Vec, material: M) -> Self {
+    pub fn new(point: Vector3, u: Vector3, v: Vector3, material: M) -> Self {
         let normal = (u * v).normalize();
 
         Self {
@@ -24,7 +24,7 @@ impl<M: Material> Plane<M> {
         }
     }
 
-    pub fn uv(&self, point: Vec) -> (f64, f64) {
+    pub fn uv(&self, point: Vector3) -> (f64, f64) {
         let pv = point - self.point;
 
         (pv.dot(self.u), pv.dot(self.v))

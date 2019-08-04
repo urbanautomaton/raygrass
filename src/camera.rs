@@ -12,39 +12,39 @@ use std::sync::{Arc, Mutex};
 use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::color::Color;
+use crate::geometry::*;
 use crate::hittable::*;
 use crate::ray::Ray;
 use crate::scene::Scene;
-use crate::geometry::*;
 
 struct Film {
-    top_left: Vec,
-    u: Vec,
-    v: Vec,
+    top_left: Vector3,
+    u: Vector3,
+    v: Vector3,
     width: f64,
     height: f64,
 }
 
 impl Film {
-    pub fn project(&self, x: f64, y: f64) -> Vec {
+    pub fn project(&self, x: f64, y: f64) -> Vector3 {
         self.top_left + self.u * x * self.width + self.v * y * self.height
     }
 }
 
 pub struct Camera {
-    origin: Vec,
+    origin: Vector3,
     film: Film,
     img_x: u32,
     img_y: u32,
     aperture: f64,
-    u: Vec,
-    v: Vec,
+    u: Vector3,
+    v: Vector3,
 }
 
 impl Camera {
     pub fn new(
-        look_from: Vec,
-        look_at: Vec,
+        look_from: Vector3,
+        look_at: Vector3,
         fov: f64,
         aperture: f64,
         focus_dist: f64,
@@ -57,7 +57,7 @@ impl Camera {
         let width = height * aspect;
         let origin = look_from;
         let w = (look_at - look_from).normalize();
-        let u = (Vec::new(0., 1., 0.) * w).normalize();
+        let u = (Vector3::new(0., 1., 0.) * w).normalize();
         let v = (u * w).normalize();
         let top_left = origin - (u * width / 2.) - (v * height / 2.) + w * focus_dist;
 
@@ -136,13 +136,13 @@ impl Camera {
             .expect("Saving image failed");
     }
 
-    fn random_in_unit_disc(rng: &mut Xoshiro256StarStar) -> Vec {
+    fn random_in_unit_disc(rng: &mut Xoshiro256StarStar) -> Vector3 {
         let mut vec;
 
         loop {
             let (x, y): (f64, f64) = rng.gen();
 
-            vec = Vec::new(x, y, 0.) * 2. - Vec::new(1., 1., 0.);
+            vec = Vector3::new(x, y, 0.) * 2. - Vector3::new(1., 1., 0.);
 
             if vec.dot(vec) < 1.0 {
                 break vec;
