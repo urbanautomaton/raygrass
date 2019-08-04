@@ -5,7 +5,7 @@ use crate::color::Color;
 use crate::hittable::Hit;
 use crate::ray::Ray;
 use crate::texture::Texture;
-use crate::vector::Vec;
+use crate::geometry::*;
 
 pub trait Material: Send + Sync {
     fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<(Ray, Color)> {

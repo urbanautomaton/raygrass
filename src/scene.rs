@@ -10,7 +10,7 @@ use crate::material::*;
 use crate::object::plane::*;
 use crate::object::sphere::*;
 use crate::texture::*;
-use crate::vector::Vec;
+use crate::geometry::*;
 
 pub struct Scene {
     pub objects: std::vec::Vec<Box<Hittable>>,

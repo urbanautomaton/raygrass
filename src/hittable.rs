@@ -2,7 +2,7 @@ use std::mem;
 
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::vector::Vec;
+use crate::geometry::*;
 
 pub struct Hit<'a> {
     pub t: f64,

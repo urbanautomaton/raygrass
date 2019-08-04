@@ -2,6 +2,7 @@ mod bvh;
 mod camera;
 mod cli;
 mod color;
+mod geometry;
 mod hittable;
 mod material;
 mod object;
@@ -9,11 +10,10 @@ mod perlin;
 mod ray;
 mod scene;
 mod texture;
-mod vector;
 
 use camera::Camera;
+use geometry::*;
 use scene::Scene;
-use vector::Vec;
 
 #[allow(dead_code)]
 fn main() {

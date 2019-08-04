@@ -15,7 +15,7 @@ use crate::color::Color;
 use crate::hittable::*;
 use crate::ray::Ray;
 use crate::scene::Scene;
-use crate::vector::Vec;
+use crate::geometry::*;
 
 struct Film {
     top_left: Vec,

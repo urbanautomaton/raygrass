@@ -3,7 +3,7 @@ use rand::seq::SliceRandom;
 use rand_xoshiro::rand_core::SeedableRng;
 use rand_xoshiro::Xoshiro256StarStar;
 
-use crate::vector::Vec;
+use crate::geometry::*;
 
 pub struct Perlin {
     rands: [Vec; 256],

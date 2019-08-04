@@ -1,7 +1,7 @@
 use crate::hittable::*;
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::vector::Vec;
+use crate::geometry::*;
 
 pub struct Plane<M: Material> {
     point: Vec,

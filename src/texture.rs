@@ -2,7 +2,7 @@ use image::*;
 
 use crate::color::Color;
 use crate::perlin::Perlin;
-use crate::vector::Vec;
+use crate::geometry::*;
 
 pub trait Texture: Send + Sync {
     fn color(&self, u: f64, v: f64, p: &Vec) -> Color;
