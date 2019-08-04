@@ -23,9 +23,9 @@ impl Perlin {
             *elem = ((Vector3::from(coords) * 2.) - Vector3::new(1., 1., 1.)).normalize();
         }
 
-        let mut xs: std::vec::Vec<usize> = (0..256).collect();
-        let mut ys: std::vec::Vec<usize> = (0..256).collect();
-        let mut zs: std::vec::Vec<usize> = (0..256).collect();
+        let mut xs: Vec<usize> = (0..256).collect();
+        let mut ys: Vec<usize> = (0..256).collect();
+        let mut zs: Vec<usize> = (0..256).collect();
 
         xs.shuffle(&mut rng);
         ys.shuffle(&mut rng);

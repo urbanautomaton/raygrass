@@ -95,7 +95,7 @@ impl Camera {
         let color_scale = 1. / f64::from(samples);
 
         let mut pixel_rng = Xoshiro256StarStar::seed_from_u64(0);
-        let mut pixels: std::vec::Vec<u32> = (0..(self.img_x * self.img_y)).collect();
+        let mut pixels: Vec<u32> = (0..(self.img_x * self.img_y)).collect();
 
         pixels.shuffle(&mut pixel_rng);
 

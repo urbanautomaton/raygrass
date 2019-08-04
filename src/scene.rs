@@ -13,7 +13,7 @@ use crate::texture::*;
 use crate::geometry::*;
 
 pub struct Scene {
-    pub objects: std::vec::Vec<Box<Hittable>>,
+    pub objects: Vec<Box<Hittable>>,
 }
 
 impl Scene {
@@ -110,7 +110,7 @@ impl Scene {
             },
         );
 
-        let mut boundeds: std::vec::Vec<Box<dyn BoundedHittable>> = vec![
+        let mut boundeds: Vec<Box<dyn BoundedHittable>> = vec![
             Box::new(glass_sphere),
             Box::new(small_glass_sphere),
             Box::new(fuzzy_green_sphere),
@@ -158,7 +158,7 @@ impl Scene {
             }
         }
 
-        let objects: std::vec::Vec<Box<Hittable>> =
+        let objects: Vec<Box<Hittable>> =
             vec![Box::new(BVH::new(boundeds)), Box::new(checkerboard)];
 
         Self { objects }
