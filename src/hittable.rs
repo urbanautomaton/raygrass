@@ -9,7 +9,7 @@ pub struct Hit<'a> {
     pub p: Point3,
     pub u: f64,
     pub v: f64,
-    pub normal: Vector3,
+    pub normal: Unit3,
     pub material: &'a Material,
 }
 
@@ -95,7 +95,7 @@ mod tests {
         fn a_hit_on_x_y_plane() {
             assert!(is_hit(&Ray {
                 origin: Point3::new(0.5, 0.5, -1.),
-                direction: Vector3::new(0., 0., 1.),
+                direction: Unit3::new(0., 0., 1.),
             }))
         }
 
@@ -103,7 +103,7 @@ mod tests {
         fn a_hit_for_ray_within_box() {
             assert!(is_hit(&Ray {
                 origin: Point3::new(0.5, 0.5, 0.5),
-                direction: Vector3::new(0., 0., 1.),
+                direction: Unit3::new(0., 0., 1.),
             }))
         }
 
@@ -111,7 +111,7 @@ mod tests {
         fn a_ray_pointing_away() {
             assert!(!is_hit(&Ray {
                 origin: Point3::new(0.5, 0.5, -1.),
-                direction: Vector3::new(0., 0., -1.),
+                direction: Unit3::new(0., 0., -1.),
             }))
         }
 
@@ -119,7 +119,7 @@ mod tests {
         fn a_glancing_ray() {
             assert!(is_hit(&Ray {
                 origin: Point3::new(0., 0., -1.),
-                direction: Vector3::new(0., 0., 1.),
+                direction: Unit3::new(0., 0., 1.),
             }))
         }
 
@@ -127,7 +127,7 @@ mod tests {
         fn a_diagonal_ray() {
             assert!(is_hit(&Ray {
                 origin: Point3::new(0., 0., 0.),
-                direction: Vector3::new(1., 1., 1.),
+                direction: Unit3::new(1., 1., 1.),
             }))
         }
     }

@@ -19,8 +19,8 @@ use crate::scene::Scene;
 
 struct Film {
     top_left: Point3,
-    u: Vector3,
-    v: Vector3,
+    u: Unit3,
+    v: Unit3,
     width: f64,
     height: f64,
 }
@@ -37,8 +37,8 @@ pub struct Camera {
     img_x: u32,
     img_y: u32,
     aperture: f64,
-    u: Vector3,
-    v: Vector3,
+    u: Unit3,
+    v: Unit3,
 }
 
 impl Camera {
@@ -57,7 +57,7 @@ impl Camera {
         let width = height * aspect;
         let origin = look_from;
         let w = (look_at - look_from).normalize();
-        let u = (Vector3::new(0., 1., 0.) * w).normalize();
+        let u = (Unit3::new(0., 1., 0.) * w).normalize();
         let v = (u * w).normalize();
         let top_left = origin - (u * width / 2.) - (v * height / 2.) + w * focus_dist;
 
@@ -144,7 +144,7 @@ impl Camera {
 
             vec = Vector3::new(x, y, 0.) * 2. - Vector3::new(1., 1., 0.);
 
-            if vec.dot(vec) < 1.0 {
+            if vec.length_squared() < 1.0 {
                 break vec;
             }
         }
@@ -163,7 +163,7 @@ impl Camera {
         let offset = self.u * random_disc.x + self.v * random_disc.y;
         let ray_origin = self.origin + offset;
 
-        let direction = self.film.project(x_pos, y_pos) - ray_origin;
+        let direction = (self.film.project(x_pos, y_pos) - ray_origin).normalize();
 
         Ray::new(ray_origin, direction)
     }

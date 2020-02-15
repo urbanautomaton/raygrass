@@ -18,7 +18,7 @@ impl<M: Material> Sphere<M> {
         }
     }
 
-    fn surface_normal(&self, point: Point3) -> Vector3 {
+    fn surface_normal(&self, point: Point3) -> Unit3 {
         (point - self.center).normalize()
     }
 
@@ -35,7 +35,7 @@ impl<M: Material> Sphere<M> {
 impl<M: Material> Hittable for Sphere<M> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center;
-        let dot = ray.direction.dot(oc);
+        let dot = ray.direction.dot(oc.normalize()) * oc.length();
 
         let a = dot.powi(2);
         let b = oc.length().powi(2) - self.radius.powi(2);

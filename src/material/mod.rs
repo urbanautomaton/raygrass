@@ -26,8 +26,7 @@ pub struct ReflectiveMaterial<T: Texture> {
 
 impl<T: Texture> Material for ReflectiveMaterial<T> {
     fn scatter_ray(&self, ray: &Ray, hit: &Hit, _rng: &mut Xoshiro256StarStar) -> Option<Ray> {
-        let dot = ray.direction.dot(hit.normal);
-        let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
+        let reflection_direction = ray.direction.reflect(hit.normal);
 
         Some(Ray::new(hit.p, reflection_direction))
     }
@@ -44,15 +43,14 @@ pub struct FuzzyReflectiveMaterial<T: Texture> {
 
 impl<T: Texture> Material for FuzzyReflectiveMaterial<T> {
     fn scatter_ray(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
-        let dot = ray.direction.dot(hit.normal);
-        let reflection_direction = ray.direction - hit.normal * (2.0 * dot);
+        let reflection_direction = ray.direction.reflect(hit.normal);
 
         let coords: [f64; 3] = rng.gen();
         let fuzz_vector = Vector3::from(coords) * self.fuzz;
-        let scattered = reflection_direction + fuzz_vector;
+        let scattered: Unit3 = (Vector3::from(reflection_direction) + fuzz_vector).into();
 
         if scattered.dot(hit.normal) > 0.0 {
-            Some(Ray::new(hit.p, scattered.normalize()))
+            Some(Ray::new(hit.p, scattered))
         } else {
             None
         }
@@ -85,7 +83,7 @@ impl<T: Texture> LambertianMaterial<T> {
 
 impl<T: Texture> Material for LambertianMaterial<T> {
     fn scatter_ray(&self, _ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray> {
-        let direction = Self::random_in_unit_sphere(rng) + hit.normal;
+        let direction = (Self::random_in_unit_sphere(rng) + Vector3::from(hit.normal)).into();
 
         Some(Ray::new(hit.p, direction))
     }
@@ -101,23 +99,23 @@ pub struct DielectricMaterial<T: Texture> {
 }
 
 impl<T: Texture> DielectricMaterial<T> {
-    fn refract(direction: &Vector3, normal: &Vector3, ni_over_nt: f64) -> Option<Vector3> {
-        let uv = direction.normalize();
-        let dt = uv.dot(*normal);
+    fn refract(direction: &Unit3, normal: &Unit3, ni_over_nt: f64) -> Option<Unit3> {
+        let uv: Vector3 = (*direction).into();
+        let un: Vector3 = (*normal).into();
+        let dt = uv.dot(un);
         let discriminant = 1.0 - ni_over_nt.powi(2) * (1.0 - dt.powi(2));
 
         if discriminant > 0.0 {
             let refracted = (uv - *normal * dt) * ni_over_nt - *normal * discriminant.sqrt();
 
-            Some(refracted)
+            Some(refracted.into())
         } else {
             None
         }
     }
 
     fn reflect(ray: &Ray, hit: &Hit) -> Option<Ray> {
-        let dot = ray.direction.dot(hit.normal);
-        let direction = ray.direction - hit.normal * (2.0 * dot);
+        let direction = ray.direction.reflect(hit.normal);
 
         Some(Ray::new(hit.p, direction))
     }
@@ -137,7 +135,7 @@ impl<T: Texture> Material for DielectricMaterial<T> {
         let rdotn = ray.direction.dot(hit.normal);
 
         if rdotn > 0.0 {
-            outward_normal = hit.normal * -1.0;
+            outward_normal = hit.normal.reverse();
             ni_over_nt = self.refractive_index;
             cosine = self.refractive_index * rdotn;
         } else {

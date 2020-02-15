@@ -5,14 +5,14 @@ use crate::ray::Ray;
 
 pub struct Plane<M: Material> {
     point: Point3,
-    u: Vector3,
-    v: Vector3,
-    normal: Vector3,
+    u: Unit3,
+    v: Unit3,
+    normal: Unit3,
     material: M,
 }
 
 impl<M: Material> Plane<M> {
-    pub fn new(point: Point3, u: Vector3, v: Vector3, material: M) -> Self {
+    pub fn new(point: Point3, u: Unit3, v: Unit3, material: M) -> Self {
         let normal = (u * v).normalize();
 
         Self {
@@ -27,7 +27,7 @@ impl<M: Material> Plane<M> {
     pub fn uv(&self, point: Point3) -> (f64, f64) {
         let pv = point - self.point;
 
-        (pv.dot(self.u), pv.dot(self.v))
+        (pv.dot(self.u.into()), pv.dot(self.v.into()))
     }
 }
 
@@ -38,7 +38,7 @@ impl<M: Material> Hittable for Plane<M> {
         if ndotl.abs() < 1e-10 {
             None
         } else {
-            let t = self.normal.dot(self.point - ray.origin) / ndotl;
+            let t = Vector3::from(self.normal).dot(self.point - ray.origin) / ndotl;
 
             if t < t_min || t > t_max {
                 None

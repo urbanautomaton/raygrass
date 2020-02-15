@@ -20,7 +20,9 @@ impl Perlin {
         for elem in rands.iter_mut() {
             let coords: [f64; 3] = rng.gen();
 
-            *elem = ((Vector3::from(coords) * 2.) - Vector3::new(1., 1., 1.)).normalize();
+            *elem = ((Vector3::from(coords) * 2.) - Vector3::new(1., 1., 1.))
+                .normalize()
+                .into();
         }
 
         let mut xs: Vec<usize> = (0..256).collect();

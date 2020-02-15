@@ -95,8 +95,8 @@ impl Scene {
         );
         let checkerboard = Plane::new(
             Point3::new(0.0, 0.0, 0.0),
-            Vector3::new(0.0, 0.0, 1.0),
-            Vector3::new(1.0, 0.0, 0.0),
+            Unit3::new(0.0, 0.0, 1.0),
+            Unit3::new(1.0, 0.0, 0.0),
             LambertianMaterial {
                 texture: CheckerboardTexture {
                     odd: ConstantTexture {

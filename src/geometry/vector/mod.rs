@@ -1,5 +1,7 @@
 use std::ops::{Add, Div, Index, Mul, Sub};
 
+use super::Unit3;
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vector3 {
     pub x: f64,
@@ -16,8 +18,12 @@ impl Vector3 {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
     }
 
-    pub fn normalize(&self) -> Vector3 {
-        *self / self.length()
+    pub fn length_squared(&self) -> f64 {
+        self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
+    }
+
+    pub fn normalize(&self) -> Unit3 {
+        Unit3::new(self.x, self.y, self.z)
     }
 
     pub fn dot(&self, other: Vector3) -> f64 {
@@ -28,6 +34,14 @@ impl Vector3 {
 impl From<[f64; 3]> for Vector3 {
     fn from(coords: [f64; 3]) -> Self {
         let [x, y, z] = coords;
+
+        Self { x, y, z }
+    }
+}
+
+impl From<Unit3> for Vector3 {
+    fn from(unit: Unit3) -> Self {
+        let Unit3 { x, y, z } = unit;
 
         Self { x, y, z }
     }
