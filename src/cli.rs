@@ -1,11 +1,24 @@
 extern crate clap;
 
+use crate::config::*;
+
 const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 const PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
-pub struct CLI<'a> {
+pub fn config() -> Config {
+    let cli = CLI::new();
+
+    Config {
+        samples: cli.samples(),
+        resolution: cli.resolution(),
+        time: cli.time(),
+        outfile: cli.outfile().to_string(),
+    }
+}
+
+struct CLI<'a> {
     matches: clap::ArgMatches<'a>,
 }
 

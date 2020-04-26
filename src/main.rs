@@ -2,6 +2,7 @@ mod bvh;
 mod camera;
 mod cli;
 mod color;
+mod config;
 mod geometry;
 mod hittable;
 mod material;
@@ -17,14 +18,14 @@ use scene::Scene;
 
 #[allow(dead_code)]
 fn main() {
-    let cli_args = cli::CLI::new();
+    let config = cli::config();
 
     let look_from = Point3::new(0.0, 2.8, 0.3);
     let look_at = Point3::new(1.0, 0.8, 5.0);
 
-    let (img_x, img_y) = cli_args.resolution();
+    let (img_x, img_y) = config.resolution;
 
-    let time = cli_args.time();
+    let time = config.time;
     let theta = 2. * std::f64::consts::PI * time / 10.;
     let cos = theta.cos();
     let sin = theta.sin();
@@ -48,5 +49,5 @@ fn main() {
 
     let scene: Scene = Scene::new(earth, moon);
 
-    camera.capture(&scene, cli_args.samples(), cli_args.outfile())
+    camera.capture(&scene, config.samples, &config.outfile)
 }
