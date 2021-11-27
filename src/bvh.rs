@@ -7,13 +7,13 @@ use rand_xoshiro::Xoshiro256StarStar;
 use crate::hittable::*;
 use crate::ray::*;
 
-pub struct BVH<'a> {
+pub struct Bvh<'a> {
     left: Box<dyn BoundedHittable + 'a>,
     right: Box<dyn BoundedHittable + 'a>,
     bounding_box: BoundingBox,
 }
 
-impl<'a> BVH<'a> {
+impl<'a> Bvh<'a> {
     fn from_hittables(
         mut hittables: Vec<Box<dyn BoundedHittable + 'a>>,
         mut rng: Xoshiro256StarStar,
@@ -30,7 +30,7 @@ impl<'a> BVH<'a> {
         let right: Box<dyn BoundedHittable + 'a>;
 
         match hittables.len() {
-            1 => panic!("You can't make a BVH of one hittable, buddy."),
+            1 => panic!("You can't make a Bvh of one hittable, buddy."),
             2 => {
                 left = hittables.pop().unwrap();
                 right = hittables.pop().unwrap();
@@ -59,7 +59,7 @@ impl<'a> BVH<'a> {
     }
 }
 
-impl<'a> Hittable for BVH<'a> {
+impl<'a> Hittable for Bvh<'a> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         if self.bounding_box.hit(ray, t_min, t_max) {
             if let Some(l_hit) = self.left.hit(ray, t_min, t_max) {
@@ -81,7 +81,7 @@ impl<'a> Hittable for BVH<'a> {
     }
 }
 
-impl<'a> Bounded for BVH<'a> {
+impl<'a> Bounded for Bvh<'a> {
     fn bounding_box(&self) -> BoundingBox {
         self.bounding_box
     }

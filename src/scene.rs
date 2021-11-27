@@ -159,7 +159,7 @@ impl Scene {
         }
 
         let objects: Vec<Box<dyn Hittable>> =
-            vec![Box::new(BVH::new(boundeds)), Box::new(checkerboard)];
+            vec![Box::new(Bvh::new(boundeds)), Box::new(checkerboard)];
 
         Self { objects }
     }

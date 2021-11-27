@@ -8,7 +8,7 @@ const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 const PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
 pub fn config() -> Config {
-    let cli = CLI::new();
+    let cli = Cli::new();
 
     Config {
         samples: cli.samples(),
@@ -18,11 +18,11 @@ pub fn config() -> Config {
     }
 }
 
-struct CLI<'a> {
+struct Cli<'a> {
     matches: clap::ArgMatches<'a>,
 }
 
-impl<'a> CLI<'a> {
+impl<'a> Cli<'a> {
     pub fn new() -> Self {
         let matches: clap::ArgMatches<'a> = clap::App::new(PKG_NAME)
             .version(PKG_VERSION)

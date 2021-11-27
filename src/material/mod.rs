@@ -9,11 +9,8 @@ use crate::texture::Texture;
 
 pub trait Material: Send + Sync {
     fn scatter(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<(Ray, Color)> {
-        if let Some(scattered) = self.scatter_ray(ray, hit, rng) {
-            Some((scattered, self.attenuation(hit)))
-        } else {
-            None
-        }
+        self.scatter_ray(ray, hit, rng)
+            .map(|scattered| (scattered, self.attenuation(hit)))
     }
 
     fn scatter_ray(&self, ray: &Ray, hit: &Hit, rng: &mut Xoshiro256StarStar) -> Option<Ray>;
