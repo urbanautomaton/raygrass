@@ -10,7 +10,7 @@ pub struct Hit<'a> {
     pub u: f64,
     pub v: f64,
     pub normal: Unit3,
-    pub material: &'a Material,
+    pub material: &'a dyn Material,
 }
 
 pub trait Hittable: Send + Sync {

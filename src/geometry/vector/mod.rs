@@ -55,7 +55,7 @@ impl Index<usize> for Vector3 {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
-            _ => panic!(format!("Index {} out of range for Vector3", index)),
+            _ => panic!("Index {} out of range for Vector3", index),
         }
     }
 }

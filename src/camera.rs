@@ -156,8 +156,8 @@ impl Camera {
         x_range: (f64, f64),
         y_range: (f64, f64),
     ) -> Ray {
-        let x_pos = rng.gen_range(x_range.0, x_range.1);
-        let y_pos = rng.gen_range(y_range.0, y_range.1);
+        let x_pos = rng.gen_range(x_range.0..x_range.1);
+        let y_pos = rng.gen_range(y_range.0..y_range.1);
 
         let random_disc = Self::random_in_unit_disc(rng) * (self.aperture / 2.);
         let offset = self.u * random_disc.x + self.v * random_disc.y;
@@ -168,7 +168,7 @@ impl Camera {
         Ray::new(ray_origin, direction)
     }
 
-    fn ray_hit<'a>(&'a self, objects: &'a [Box<Hittable>], ray: Ray) -> Option<Hit> {
+    fn ray_hit<'a>(&'a self, objects: &'a [Box<dyn Hittable>], ray: Ray) -> Option<Hit> {
         let mut result: Option<Hit> = None;
 
         for o in objects {

@@ -8,17 +8,17 @@ use crate::hittable::*;
 use crate::ray::*;
 
 pub struct BVH<'a> {
-    left: Box<BoundedHittable + 'a>,
-    right: Box<BoundedHittable + 'a>,
+    left: Box<dyn BoundedHittable + 'a>,
+    right: Box<dyn BoundedHittable + 'a>,
     bounding_box: BoundingBox,
 }
 
 impl<'a> BVH<'a> {
     fn from_hittables(
-        mut hittables: Vec<Box<BoundedHittable + 'a>>,
+        mut hittables: Vec<Box<dyn BoundedHittable + 'a>>,
         mut rng: Xoshiro256StarStar,
     ) -> Self {
-        let axis = rng.gen_range(0, 3);
+        let axis = rng.gen_range(0..3);
 
         hittables.sort_by(|a, b| {
             a.bounding_box().min[axis]
@@ -26,8 +26,8 @@ impl<'a> BVH<'a> {
                 .unwrap_or(Ordering::Equal)
         });
 
-        let left: Box<BoundedHittable + 'a>;
-        let right: Box<BoundedHittable + 'a>;
+        let left: Box<dyn BoundedHittable + 'a>;
+        let right: Box<dyn BoundedHittable + 'a>;
 
         match hittables.len() {
             1 => panic!("You can't make a BVH of one hittable, buddy."),
@@ -52,7 +52,7 @@ impl<'a> BVH<'a> {
         }
     }
 
-    pub fn new(hittables: Vec<Box<BoundedHittable + 'a>>) -> Self {
+    pub fn new(hittables: Vec<Box<dyn BoundedHittable + 'a>>) -> Self {
         let rng = Xoshiro256StarStar::seed_from_u64(0);
 
         Self::from_hittables(hittables, rng)

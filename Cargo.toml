@@ -6,13 +6,13 @@ edition = "2018"
 description = "A terrible rust version of pbrt"
 
 [dependencies]
-image = "0.21.1"
-num-complex = "0.2.1"
-rand = "0.7.0-pre.1"
+image = "0.23.14"
+num-complex = "0.4.0"
+rand = "0.8.4"
 rand_xoshiro = "*"
-indicatif = "0.11.0"
-rayon = "1.0.3"
-clap = "2.33.0"
+indicatif = "0.16.2"
+rayon = "1.5.1"
+clap = "2.33.3"
 
 [profile.release]
 debug = true

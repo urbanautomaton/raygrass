@@ -62,7 +62,7 @@ impl Index<usize> for Unit3 {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
-            _ => panic!(format!("Index {} out of range for Unit3", index)),
+            _ => panic!("Index {} out of range for Unit3", index),
         }
     }
 }

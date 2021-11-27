@@ -13,7 +13,7 @@ use crate::object::sphere::*;
 use crate::texture::*;
 
 pub struct Scene {
-    pub objects: Vec<Box<Hittable>>,
+    pub objects: Vec<Box<dyn Hittable>>,
 }
 
 impl Scene {
@@ -128,10 +128,10 @@ impl Scene {
             let texture = ConstantTexture {
                 color: Color::from(color_coords),
             };
-            let position = Point3::new(rng.gen_range(-5., 5.), 0.1, rng.gen_range(2., 10.));
+            let position = Point3::new(rng.gen_range(-5.0..5.), 0.1, rng.gen_range(2.0..10.));
             let radius = 0.1;
 
-            match rng.gen_range(0u32, 3) {
+            match rng.gen_range(0u32..3) {
                 0 => boundeds.push(Box::new(Sphere::new(
                     position,
                     radius,
@@ -158,7 +158,7 @@ impl Scene {
             }
         }
 
-        let objects: Vec<Box<Hittable>> =
+        let objects: Vec<Box<dyn Hittable>> =
             vec![Box::new(BVH::new(boundeds)), Box::new(checkerboard)];
 
         Self { objects }

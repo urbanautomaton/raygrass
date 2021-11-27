@@ -48,7 +48,7 @@ impl ImageTexture {
         Self {
             width: f64::from(image.width()),
             height: f64::from(image.height()),
-            image: image.flipv().to_rgb(),
+            image: image.flipv().to_rgb8(),
         }
     }
 }
