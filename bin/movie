@@ -12,9 +12,4 @@ ffmpeg \
   -acodec aac \
   out.mp4
 
-ffmpeg \
-  -f concat \
-  -safe 0 \
-  -i <(for _ in {1..4}; do printf "file '%s'\\n" "${PWD}/out.mp4"; done) \
-  -c copy \
-  looped.mp4
+ffmpeg -stream_loop 4 -i out.mp4 -c copy looped.mp4
